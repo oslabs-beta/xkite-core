@@ -1,0 +1,13 @@
+{
+  "name": "xkite-core",
+  "version": "1.0.0",
+  "description": "Core library for xkite application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx tsc"
+  },
+  "keywords": ["kafka","docker","spring","ksql","kafkajs"],
+  "author": "Zahara Aviv",
+  "license": "MIT"
+}
