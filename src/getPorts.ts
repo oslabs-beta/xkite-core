@@ -1,4 +1,5 @@
 import { _ports_ } from './constants/yml';
+const getPort = require('get-port');
 // I made up the second number for all of these... it's the start port +200
 const DEFAULT_BROKER_PORT = 7771;
 const DEFAULT_BROKER_JMX_PORT = 9992;
@@ -18,12 +19,10 @@ export async function getPorts(
   // Arbitrary cap to try to keep port numbers in a relatively sane range
   const maxPort = firstPort + 200;
 
-  const gp = await import('get-port');
-  const getPort = gp.default;
-  const portNumbers = gp.portNumbers;
-
   for (count; count > 0; count--) {
-    const newPort = await getPort({ port: portNumbers(firstPort, maxPort) });
+    const newPort = await getPort({
+      port: getPort.makeRange(firstPort, maxPort),
+    });
     firstPort = newPort;
     availablePorts.push(newPort);
   }
