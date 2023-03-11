@@ -74,5 +74,5 @@ download/config/cfg.json
 # Java generated files
 src/springApp/target/*
 
-# build packaging
-lib/download/*
+# ignore generated output library
+lib/
