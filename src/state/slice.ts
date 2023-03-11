@@ -115,7 +115,7 @@ function readConfigFromFile(): any {
       return defaultState;
     }
   } catch (err) {
-    console.log(`Error reading Kite configFile: ${err}`);
+    // console.log(`Error reading Kite configFile: ${err}`);
     return defaultState;
   }
 }
@@ -128,6 +128,6 @@ function writeConfigToFile(state: any): void {
       JSON.stringify(state)
     );
   } catch (err) {
-    console.log(`Error writing Kite configFile ${err}`);
+    // console.log(`Error writing Kite configFile ${err}`);
   }
 }
