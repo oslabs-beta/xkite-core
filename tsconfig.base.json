@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
     "strict": true,
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
@@ -8,7 +11,12 @@
     "allowJs": true,
     "declaration": true,
     "declarationMap": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "typeRoots": ["./src/types", "./node_modules/@types"],
+    "paths": {
+      "*": ["./src/*", "./src/types/*"]
+    }
   },
+  "include": ["./src/types/**/*.d.ts", "./src/**/*"],
   "files": ["./src/index.ts"]
 }

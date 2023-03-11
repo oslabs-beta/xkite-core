@@ -1,0 +1,1 @@
+{"version":3,"file":"slice.d.ts","sourceRoot":"","sources":["../../../src/state/slice.ts"],"names":[],"mappings":"AAgEA,QAAA,MACE,eAAe,oFACf,SAAS,8EACT,SAAS,8EACT,QAAQ,6EACR,QAAQ,6EACR,cAAc,mFACd,eAAe,oFACf,aAAa,gFACM,CAAC;AAEtB,OAAO,EACL,eAAe,EACf,SAAS,EACT,SAAS,EACT,QAAQ,EACR,QAAQ,EACR,cAAc,EACd,eAAe,EACf,aAAa,GACd,CAAC;;AAEF,wBAAiC"}

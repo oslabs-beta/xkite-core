@@ -8,14 +8,14 @@ import {
   KiteServerState,
   MAX_NUMBER_OF_BROKERS,
   MAX_NUMBER_OF_ZOOKEEPERS,
-} from './types/constants';
-import defaultCfg, { configFilePath } from './types/constants';
+} from './constants/kite';
+import defaultCfg, { configFilePath } from './constants/kite';
 import { getPorts } from './getPorts';
-import { _ports_, downloadDir } from './types/ymlconstants';
+import { _ports_, downloadDir } from './constants/yml';
 const configPath = path.join(downloadDir, 'docker-compose.yml');
 const zipPath = path.join(downloadDir, 'pipeline.zip');
 
-import store from './store';
+import store from './state/store';
 import {
   setPackageBuild,
   setConfig,
@@ -25,8 +25,8 @@ import {
   setServerState,
   setServiceState,
   setConfigFile,
-} from './slice';
-import { KiteConfig, KiteConfigFile } from './types';
+} from './state/slice';
+import { KiteConfig, KiteConfigFile } from './types/kite';
 
 function KiteCreator() {
   //Private Variable / Methods:
@@ -635,7 +635,7 @@ import {
   KiteKafkaCfg,
   KiteSetup,
   KafkaSetup,
-} from './types';
+} from './types/kite';
 import { YAMLConfig, YAMLServicesDefaultSetup } from './types/yml';
 export {
   KiteConfig,
