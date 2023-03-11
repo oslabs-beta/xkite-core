@@ -9,6 +9,8 @@ import type {
   KiteState,
   KiteServerState,
   KiteClass,
+  KiteKafkaCfg,
+  dbCfg,
 } from './types/index.js';
 import * as consts from './constants/kite.js';
 const { defaultCfg } = consts;
@@ -108,7 +110,7 @@ function KiteCreator(): KiteClass {
    */
   async function checkConfigPorts(cfg: KiteConfig) {
     try {
-      cfg.kafka = {
+      let kafka: KiteKafkaCfg = {
         ...cfg.kafka,
         brokers: {
           ...cfg.kafka.brokers,
@@ -141,101 +143,130 @@ function KiteCreator(): KiteClass {
       };
 
       if (cfg.kafka.jmx !== undefined) {
-        cfg.kafka.jmx = {
-          ...cfg.kafka.jmx,
-          ports: await checkPorts(
-            cfg.kafka.jmx.ports ??
-              new Array(cfg.kafka.zookeepers.size).fill(_ports_.jmx.external)
-          ),
-        };
-      }
-      if (cfg.kafka.spring !== undefined) {
-        cfg.kafka.spring = {
-          ...cfg.kafka.spring,
-          port: await checkPort(
-            cfg.kafka.spring.port ?? _ports_.spring.external
-          ),
+        kafka = {
+          ...kafka,
+          jmx: {
+            ...cfg.kafka.jmx,
+            ports: await checkPorts(
+              cfg.kafka.jmx.ports ??
+                new Array(cfg.kafka.zookeepers.size).fill(_ports_.jmx.external)
+            ),
+          },
         };
       }
 
-      if (cfg.db !== undefined) {
-        if (cfg.db.kafkaconnect !== undefined) {
-          cfg.db.kafkaconnect = {
-            ...cfg.db.kafkaconnect,
+      if (cfg.kafka.spring !== undefined) {
+        kafka = {
+          ...kafka,
+          spring: {
+            ...kafka.spring,
             port: await checkPort(
-              cfg.db.kafkaconnect?.port ?? _ports_.kafkaconnect_src.external
+              cfg.kafka.spring.port ?? _ports_.spring.external
             ),
+          },
+        };
+      }
+      // assign the parameters
+      cfg = { ...cfg, kafka: { ...cfg.kafka, ...kafka } };
+      if (cfg.db !== undefined) {
+        let db = Object.assign({}, cfg.db);
+        if (db.kafkaconnect !== undefined) {
+          db = {
+            ...db,
+            kafkaconnect: {
+              ...db.kafkaconnect,
+              port: await checkPort(
+                db.kafkaconnect?.port ?? _ports_.kafkaconnect_src.external
+              ),
+            },
           };
         } else {
-          cfg.db.kafkaconnect = {
-            port: await checkPort(_ports_.kafkaconnect_src.external),
+          db = {
+            ...db,
+            kafkaconnect: {
+              port: await checkPort(_ports_.kafkaconnect_src.external),
+            },
           };
         }
-        cfg.db = {
-          ...cfg.db,
+        db = {
+          ...db,
           port: await checkPort(
-            cfg.db.port ??
-              (cfg.db.name === 'ksql'
+            db.port ??
+              (db.name === 'ksql'
                 ? _ports_.ksql.external
                 : _ports_.postgresql.external)
           ),
         };
-        if (cfg.db.ksql !== undefined) {
-          cfg.db.ksql = {
-            ...cfg.db.ksql,
-            schema_port: await checkPort(
-              cfg.db.ksql.schema_port ?? _ports_.ksql_schema.external
-            ),
+        if (db.ksql !== undefined) {
+          db = {
+            ...db,
+            ksql: {
+              ...db.ksql,
+              schema_port: await checkPort(
+                db.ksql.schema_port ?? _ports_.ksql_schema.external
+              ),
+            },
           };
         }
+        // assign the parameters
+        cfg = { ...cfg, db: { ...cfg.db, ...db } };
       }
+
       if (cfg.sink !== undefined) {
-        if (cfg.sink.kafkaconnect !== undefined) {
-          cfg.sink.kafkaconnect = {
-            ...cfg.sink.kafkaconnect,
-            port: await checkPort(
-              cfg.sink.kafkaconnect.port ?? _ports_.kafkaconnect_sink.external
-            ),
+        let sink = Object.assign({}, cfg.sink);
+        if (sink.kafkaconnect !== undefined) {
+          sink = {
+            ...sink,
+            kafkaconnect: {
+              ...sink.kafkaconnect,
+              port: await checkPort(
+                sink.kafkaconnect.port ?? _ports_.kafkaconnect_sink.external
+              ),
+            },
           };
         } else {
-          cfg.sink = {
-            ...cfg.sink,
+          sink = {
+            ...sink,
             kafkaconnect: {
               port: await checkPort(_ports_.kafkaconnect_sink.external),
             },
           };
         }
-        if (cfg.sink.name === 'jupyter') {
-          cfg.sink = {
-            ...cfg.sink,
-            port: await checkPort(cfg.sink?.port ?? _ports_.jupyter.external),
+        if (sink.name === 'jupyter') {
+          sink = {
+            ...sink,
+            port: await checkPort(sink?.port ?? _ports_.jupyter.external),
           };
         } else {
           // spark
-          cfg.sink = {
-            ...cfg.sink,
-            port: await checkPort(
-              cfg.sink?.port ?? _ports_.spark.webui.external
-            ),
+          sink = {
+            ...sink,
+            port: await checkPort(sink?.port ?? _ports_.spark.webui.external),
             rpc_port: await checkPort(
-              cfg.sink?.rpc_port ?? _ports_.spark.rpc.external
+              sink?.rpc_port ?? _ports_.spark.rpc.external
             ),
           };
         }
+        // assign the parameters
+        cfg = { ...cfg, sink: { ...cfg.sink, ...sink } };
       }
       if (cfg.grafana !== undefined) {
-        cfg.grafana = {
+        const grafana = {
           ...cfg.grafana,
           port: await checkPort(cfg.grafana.port ?? _ports_.grafana.external),
         };
+        // assign the parameters
+        cfg = { ...cfg, grafana: { ...cfg.grafana, ...grafana } };
       }
       if (cfg.prometheus !== undefined) {
-        cfg.prometheus = {
+        const prometheus = {
           ...cfg.prometheus,
           port: await checkPort(
             cfg.prometheus.port ?? _ports_.prometheus.external
           ),
         };
+        // assign the parameters
+        cfg = { ...cfg, prometheus: { ...cfg.prometheus, ...prometheus } };
       }
     } catch (error) {
       console.error('Error occurred while checking config ports!', error);

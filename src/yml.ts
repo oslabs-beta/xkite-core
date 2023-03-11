@@ -428,10 +428,10 @@ const ymlGenerator: () => (c: KiteConfig) => KiteSetup = () => {
 
       // JMX Config:
       if (kafka.jmx !== undefined) {
-        let jmxPort = _ports_.jmx.internal + n;
+        let jmxPort = _ports_.jmx.external + n;
         const jmxName = `jmx-kafka${n}`;
         if (kafka.jmx !== undefined && kafka.jmx?.ports !== undefined) {
-          jmxPort = kafka.jmx?.ports[i];
+          jmxPort = kafka.jmx?.ports[i] ?? jmxPort;
         }
         // update YAML service
         YAML.services[jmxName] = {
