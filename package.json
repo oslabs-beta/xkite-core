@@ -1,6 +1,6 @@
 {
   "name": "xkite-core",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Core library for xkite application",
   "types": "./lib/cjs/types/index.d.ts",
   "main": "./lib/cjs/index.js",
@@ -22,11 +22,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rm -rf ./lib && mkdir -p ./lib && cp -r ./download ./lib/",
-    "build": "npm run clean && npm run build:esm && npm run build:cjs",
-    "build:esm": "tsc -p ./tsconfig.esm.json && mv lib/esm/index.js lib/esm/index.mjs && npm run copy:types:esm",
-    "build:cjs": "tsc -p ./tsconfig.cjs.json && npm run copy:types:cjs",
-    "copy:types:esm": "mkdir -p lib/esm/types && cp -r ./src/types/* lib/esm/types/",
-    "copy:types:cjs": "mkdir -p lib/cjs/types && cp -r ./src/types/* lib/cjs/types/",
+    "build": "npm run clean && npm run build:esm && npm run build:cjs && npm run copy:types",
+    "build:esm": "tsc -p ./tsconfig.esm.json && mv lib/esm/index.js lib/esm/index.mjs",
+    "build:cjs": "tsc -p ./tsconfig.cjs.json",
+    "copy:types:esm": "cp -r ./src/types lib/esm/types/",
+    "copy:types:cjs": "cp -r ./src/types lib/cjs/types/",
+    "copy:types": "mkdir -p ./lib/esm/types && mkdir -p ./lib/esm/types && npm run copy:types:esm && npm run copy:types:cjs",
     "prepack": "npm run build",
     "build-spring": "mvn -f ./src/springApp clean package && mv ./src/springApp/target/*.jar ./download/spring/app.jar",
     "push": "npm publish --access public"
