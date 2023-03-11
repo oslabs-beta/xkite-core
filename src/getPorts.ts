@@ -14,7 +14,7 @@ export function getDefaultPorts(type: string, count: number) {
   return _ports_;
 }
 
-export async function getPorts(
+export default async function getPorts(
   firstPort: number,
   count: number
 ): Promise<number[]> {

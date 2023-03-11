@@ -10,7 +10,7 @@ import {
   MAX_NUMBER_OF_ZOOKEEPERS,
 } from './constants/kite.js';
 import defaultCfg, { configFilePath } from './constants/kite.js';
-import { getPorts } from './getPorts.js';
+import getPorts from './getPorts.js';
 import * as yml from './constants/yml.js';
 const { _ports_, downloadDir } = yml;
 const configPath = path.join(downloadDir, 'docker-compose.yml');
