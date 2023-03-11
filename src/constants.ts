@@ -53,9 +53,6 @@ export enum KiteServerState {
   Disconnected = 'Disconnected',
   Connected = 'Connected',
 }
-export const configFilePath = path.join(
-  process.cwd(),
-  'src/common/kite/download/config'
-);
+export const configFilePath = path.join(__dirname, '../download/config');
 
 export default defaultCfg;
