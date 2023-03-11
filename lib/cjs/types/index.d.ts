@@ -1,7 +1,7 @@
 import ymlGenerator from './yml';
 import { KiteState, KiteServerState, MAX_NUMBER_OF_BROKERS, MAX_NUMBER_OF_ZOOKEEPERS } from './types/constants';
 import defaultCfg, { configFilePath } from './types/constants';
-import { _ports_, downloadDir } from './types/yml/constants';
+import { _ports_, downloadDir } from './types/ymlconstants';
 import { KiteConfig, KiteConfigFile } from './types';
 declare const Kite: {
     defaultCfg: KiteConfig;

@@ -1,4 +1,4 @@
-import { KiteConfig, KiteSetup } from '../types';
+import { KiteConfig, KiteSetup } from './types';
 /**
  * creates the pertinent yml configuration for docker
  * based on the input config
@@ -6,4 +6,4 @@ import { KiteConfig, KiteSetup } from '../types';
  */
 declare const ymlGenerator: () => (c: KiteConfig) => KiteSetup;
 export default ymlGenerator;
-//# sourceMappingURL=index.d.ts.map
+//# sourceMappingURL=yml.d.ts.map

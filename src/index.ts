@@ -11,7 +11,7 @@ import {
 } from './types/constants';
 import defaultCfg, { configFilePath } from './types/constants';
 import { getPorts } from './getPorts';
-import { _ports_, downloadDir } from './types/yml/constants';
+import { _ports_, downloadDir } from './types/ymlconstants';
 const configPath = path.join(downloadDir, 'docker-compose.yml');
 const zipPath = path.join(downloadDir, 'pipeline.zip');
 

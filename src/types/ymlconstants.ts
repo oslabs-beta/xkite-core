@@ -16,7 +16,7 @@ import {
   SparkCfg,
   SpringCfg,
   YAMLConfig,
-} from './';
+} from './yml';
 
 export const downloadDir = path.join(__dirname, '../../download');
 export const network = 'localhost'; //change to 0.0.0.0 to expose ports globally
