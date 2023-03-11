@@ -1,6 +1,6 @@
-// types/common/yaml.d.ts
+// types/yaml.d.ts
 
-import { KiteSetup, KiteConfig } from '@types';
+import { KiteSetup, KiteConfig } from '../../types';
 
 type YAMLGenerator = (k: KiteConfig) => KiteSetup;
 
