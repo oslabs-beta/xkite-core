@@ -1,13 +1,13 @@
 import path from 'path';
 import fs from 'fs-extra';
 import compose from 'docker-compose';
-import ymlGenerator from 'kite/src/ymlgenerator';
+import ymlGenerator from '@ymlgenerator';
 const zipper = require('zip-local');
 // import Monitor from '@/common/monitor/monitor';
 import { KiteState, KiteServerState } from './constants';
 import defaultCfg, { configFilePath } from './constants';
 import { getPorts } from './getPorts';
-import { _ports_ } from 'kite/src/ymlgenerator/constants';
+import { _ports_ } from '@ymlgenerator/constants';
 const downloadDir = path.join(process.cwd(), './download');
 const configPath = path.join(downloadDir, 'docker-compose.yml');
 const zipPath = path.join(downloadDir, 'pipeline.zip');
@@ -21,7 +21,7 @@ import {
   setState,
   setServerState,
   setServiceState,
-  setConfigFile
+  setConfigFile,
 } from './slice';
 import { KiteConfig, KiteConfigFile } from './types';
 
@@ -43,7 +43,7 @@ function KiteCreator() {
         fetch(`${server}/api/kite/getConfig`),
         fetch(`${server}/api/kite/getSetup`),
         fetch(`${server}/api/kite/getConfigFile`),
-        fetch(`${server}/api/kite/getPackageBuild`)
+        fetch(`${server}/api/kite/getPackageBuild`),
       ];
       store.dispatch(setConfig((await res[0]).json()));
       store.dispatch(setSetup((await res[1]).json()));
@@ -102,7 +102,6 @@ function KiteCreator() {
    */
   async function checkConfigPorts(cfg: KiteConfig) {
     try {
-
       cfg.kafka = {
         ...cfg.kafka,
         brokers: {
@@ -118,8 +117,8 @@ function KiteCreator() {
             jmx: await checkPorts(
               cfg.kafka.brokers?.ports?.jmx ??
                 new Array(cfg.kafka.brokers.size).fill(_ports_.kafka.jmx)
-            )
-          }
+            ),
+          },
         },
         zookeepers: {
           ...cfg.kafka.zookeepers,
@@ -130,9 +129,9 @@ function KiteCreator() {
                 new Array(cfg.kafka.zookeepers.size).fill(
                   _ports_.zookeeper.client.external
                 )
-            )
-          }
-        }
+            ),
+          },
+        },
       };
 
       if (cfg.kafka.jmx !== undefined) {
@@ -141,14 +140,15 @@ function KiteCreator() {
           ports: await checkPorts(
             cfg.kafka.jmx.ports ??
               new Array(cfg.kafka.zookeepers.size).fill(_ports_.jmx.external)
-          )
+          ),
         };
       }
       if (cfg.kafka.spring !== undefined) {
         cfg.kafka.spring = {
           ...cfg.kafka.spring,
-          port: 
-            await checkPort(cfg.kafka.spring.port ?? _ports_.spring.external)
+          port: await checkPort(
+            cfg.kafka.spring.port ?? _ports_.spring.external
+          ),
         };
       }
 
@@ -156,33 +156,30 @@ function KiteCreator() {
         if (cfg.db.kafkaconnect !== undefined) {
           cfg.db.kafkaconnect = {
             ...cfg.db.kafkaconnect,
-            port: 
-              await checkPort(
-                cfg.db.kafkaconnect?.port ?? _ports_.kafkaconnect_src.external
-              )
+            port: await checkPort(
+              cfg.db.kafkaconnect?.port ?? _ports_.kafkaconnect_src.external
+            ),
           };
         } else {
           cfg.db.kafkaconnect = {
-            port: await checkPort(_ports_.kafkaconnect_src.external)
+            port: await checkPort(_ports_.kafkaconnect_src.external),
           };
         }
         cfg.db = {
           ...cfg.db,
-          port: 
-            await checkPort(
-              cfg.db.port ??
-                  (cfg.db.name === 'ksql'
-                    ? _ports_.ksql.external
-                    : _ports_.postgresql.external)
-            )
+          port: await checkPort(
+            cfg.db.port ??
+              (cfg.db.name === 'ksql'
+                ? _ports_.ksql.external
+                : _ports_.postgresql.external)
+          ),
         };
         if (cfg.db.ksql !== undefined) {
           cfg.db.ksql = {
             ...cfg.db.ksql,
-            schema_port: 
-              await checkPort(
-                cfg.db.ksql.schema_port ?? _ports_.ksql_schema.external
-              )
+            schema_port: await checkPort(
+              cfg.db.ksql.schema_port ?? _ports_.ksql_schema.external
+            ),
           };
         }
       }
@@ -190,47 +187,48 @@ function KiteCreator() {
         if (cfg.sink.kafkaconnect !== undefined) {
           cfg.sink.kafkaconnect = {
             ...cfg.sink.kafkaconnect,
-            port:
-              await checkPort(
-                cfg.sink.kafkaconnect.port ?? _ports_.kafkaconnect_sink.external
-              )
+            port: await checkPort(
+              cfg.sink.kafkaconnect.port ?? _ports_.kafkaconnect_sink.external
+            ),
           };
         } else {
           cfg.sink = {
             ...cfg.sink,
             kafkaconnect: {
-            port: await checkPort(_ports_.kafkaconnect_sink.external)
-          }};
+              port: await checkPort(_ports_.kafkaconnect_sink.external),
+            },
+          };
         }
         if (cfg.sink.name === 'jupyter') {
           cfg.sink = {
             ...cfg.sink,
-            port: 
-              await checkPort(cfg.sink?.port ?? _ports_.jupyter.external)
+            port: await checkPort(cfg.sink?.port ?? _ports_.jupyter.external),
           };
         } else {
           // spark
           cfg.sink = {
             ...cfg.sink,
-            port:
-              await checkPort(cfg.sink?.port ?? _ports_.spark.webui.external),
-            rpc_port:
-              await checkPort(cfg.sink?.rpc_port ?? _ports_.spark.rpc.external)
+            port: await checkPort(
+              cfg.sink?.port ?? _ports_.spark.webui.external
+            ),
+            rpc_port: await checkPort(
+              cfg.sink?.rpc_port ?? _ports_.spark.rpc.external
+            ),
           };
         }
       }
       if (cfg.grafana !== undefined) {
         cfg.grafana = {
           ...cfg.grafana,
-          port:
-            await checkPort(cfg.grafana.port ?? _ports_.grafana.external)
+          port: await checkPort(cfg.grafana.port ?? _ports_.grafana.external),
         };
       }
       if (cfg.prometheus !== undefined) {
         cfg.prometheus = {
           ...cfg.prometheus,
-          port: 
-            await checkPort(cfg.prometheus.port ?? _ports_.prometheus.external)
+          port: await checkPort(
+            cfg.prometheus.port ?? _ports_.prometheus.external
+          ),
         };
       }
     } catch (error) {
@@ -258,7 +256,7 @@ function KiteCreator() {
       store.dispatch(setPackageBuild(zipPath));
       const header = {
         'Content-Type': 'text/yml',
-        'Content-Length': fs.statSync(configPath).size
+        'Content-Length': fs.statSync(configPath).size,
       };
       const fileStream = fs.readFileSync(configPath, 'utf-8');
       store.dispatch(setConfigFile({ header, fileStream }));
@@ -293,7 +291,7 @@ function KiteCreator() {
       console.log('deploying docker containers...');
       await compose.upAll({
         cwd: downloadDir,
-        log: true
+        log: true,
         // commandOptions: '', // TBD set the name of container
         // callback: (chunk: Buffer) => { //TODO remove
         //   //progress report
@@ -314,9 +312,9 @@ function KiteCreator() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Accept: 'application/json'
+          Accept: 'application/json',
         },
-        body: JSON.stringify({ service })
+        body: JSON.stringify({ service }),
       });
     } catch (err) {
       console.error(`Could not pause docker instances on server:\n${err}`);
@@ -329,7 +327,7 @@ function KiteCreator() {
       try {
         await compose.pauseOne(name, {
           cwd: downloadDir,
-          log: true
+          log: true,
         });
       } catch (err) {
         console.error(`Could not pause docker instances on local:\n${err}`);
@@ -344,9 +342,9 @@ function KiteCreator() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Accept: 'application/json'
+          Accept: 'application/json',
         },
-        body: JSON.stringify({ service })
+        body: JSON.stringify({ service }),
       });
     } catch (err) {
       console.error(`Could not unpause docker instances on server:\n${err}`);
@@ -359,7 +357,7 @@ function KiteCreator() {
       try {
         await compose.unpauseOne(name, {
           cwd: downloadDir,
-          log: true
+          log: true,
         });
       } catch (err) {
         console.error(`Could not unpause docker instances on local:\n${err}`);
@@ -373,8 +371,8 @@ function KiteCreator() {
       await fetch(`${server}/api/kite/shutdown`, {
         method: 'POST',
         headers: {
-          Accept: 'application/json'
-        }
+          Accept: 'application/json',
+        },
       });
     } catch (err) {
       console.error(`Could not shutdown docker instances on server:\n${err}`);
@@ -386,7 +384,7 @@ function KiteCreator() {
       await compose.down({
         cwd: downloadDir,
         log: true,
-        commandOptions: ['--remove-orphans', '--volumes'] //force stop and delete volumes.
+        commandOptions: ['--remove-orphans', '--volumes'], //force stop and delete volumes.
       });
     } catch (err) {
       console.error(`Could not shutdown docker instances on local:\n${err}`);
@@ -401,8 +399,8 @@ function KiteCreator() {
       await fetch(`${server}/api/kite/disconnect`, {
         method: 'POST',
         headers: {
-          Accept: 'application/json'
-        }
+          Accept: 'application/json',
+        },
       });
     } catch (err) {
       console.error(`Could not disconnect docker instances on server:\n${err}`);
@@ -421,7 +419,7 @@ function KiteCreator() {
       await compose.down({
         cwd: downloadDir,
         log: true,
-        commandOptions: ['--remove-orphans', '--volumes'] //force stop and delete volumes.
+        commandOptions: ['--remove-orphans', '--volumes'], //force stop and delete volumes.
       });
     } catch (err) {
       console.error(`Could not disconnect docker instances on local:\n${err}`);
@@ -552,7 +550,7 @@ function KiteCreator() {
         try {
           const header = {
             'Content-Type': 'application/zip',
-            'Content-Length': fs.statSync(zipPath).size
+            'Content-Length': fs.statSync(zipPath).size,
           };
           const fileStream = fs.readFileSync(zipPath);
           res({ header, fileStream });
@@ -621,7 +619,7 @@ function KiteCreator() {
         await unpauseLocal(service);
       }
       store.dispatch(setServiceState({ type: 'unpause', service }));
-    }
+    },
   };
 }
 const Kite = KiteCreator();

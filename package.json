@@ -7,7 +7,25 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx tsc"
   },
-  "keywords": ["kafka","docker","spring","ksql","kafkajs"],
+  "keywords": [
+    "kafka",
+    "docker",
+    "spring",
+    "ksql",
+    "kafkajs"
+  ],
   "author": "Zahara Aviv",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@reduxjs/toolkit": "^1.9.3",
+    "@types/fs-extra": "^11.0.1",
+    "@types/js-yaml": "^4.0.5",
+    "@types/node": "^18.15.0",
+    "docker-compose": "^0.23.19",
+    "fs-extra": "^11.1.0",
+    "get-port": "^6.1.2",
+    "js-yaml": "^4.1.0",
+    "os": "^0.1.2",
+    "path": "^0.12.7"
+  }
 }
