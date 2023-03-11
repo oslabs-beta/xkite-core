@@ -21,9 +21,9 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "pretest": "esbuild --platform=node src/deps.ts --bundle --outfile=src/deps.bundle.js",
+    "pretest": "esbuild --platform=node src/deps.ts --bundle --outfile=src/deps.bundle.js && (echo '// @ts-nocheck' && cat ./src/deps.bundle.js) > .tmp && mv .tmp ./src/deps.bundle.js",
     "clean": "rm -rf ./lib && mkdir -p ./lib && cp -r ./download ./lib/",
-    "build": "npm run clean && npm run build:esm && npm run build:cjs && npm run copy:types",
+    "build": "npm run pretest && npm run clean && npm run build:esm && npm run build:cjs && npm run copy:types",
     "build:esm": "tsc -p ./tsconfig.esm.json && mv lib/esm/index.js lib/esm/index.mjs",
     "build:cjs": "tsc -p ./tsconfig.cjs.json",
     "copy:types:esm": "cp -r ./src/types lib/esm/types/",
@@ -50,6 +50,7 @@
   "devDependencies": {
     "@reduxjs/toolkit": "^1.9.3",
     "@types/fs-extra": "^11.0.1",
+    "@types/get-port": "^4.2.0",
     "@types/js-yaml": "^4.0.5",
     "@types/node": "^18.15.0",
     "docker-compose": "^0.23.19",

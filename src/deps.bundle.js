@@ -1,3 +1,4 @@
+// @ts-nocheck
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -29,7 +30,7 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/deps.ts
 var deps_exports = {};
 __export(deps_exports, {
-  getPort: () => getPorts
+  default: () => deps_default
 });
 module.exports = __toCommonJS(deps_exports);
 
@@ -144,7 +145,8 @@ async function getPorts(options) {
   }
   throw new Error("No available ports found");
 }
+
+// src/deps.ts
+var deps_default = getPorts;
 // Annotate the CommonJS export names for ESM import in node:
-0 && (module.exports = {
-  getPort
-});
+0 && (module.exports = {});

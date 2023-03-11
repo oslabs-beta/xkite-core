@@ -1,3 +1,3 @@
 import getPort from 'get-port';
 
-export { getPort };
+export default getPort;

@@ -13,5 +13,7 @@
     "declarationMap": true,
     "allowSyntheticDefaultImports": true
   },
+  "include": ["./src/**/*.ts"],
+  "exclude": ["./src/**/*.js", "./src/deps.ts"],
   "files": ["./src/index.ts"]
 }

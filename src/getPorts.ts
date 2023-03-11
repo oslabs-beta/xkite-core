@@ -1,5 +1,7 @@
 import { _ports_ } from './constants/yml';
-import { getPort } from './deps.bundle';
+
+//@ts-ignore
+import getPort from './deps.bundle.js';
 // I made up the second number for all of these... it's the start port +200
 const DEFAULT_BROKER_PORT = 7771;
 const DEFAULT_BROKER_JMX_PORT = 9992;
