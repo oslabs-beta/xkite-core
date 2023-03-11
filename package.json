@@ -1,6 +1,6 @@
 {
   "name": "xkite-core",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "Core library for xkite application",
   "types": "./lib/cjs/types/index.d.ts",
   "main": "./lib/cjs/index.js",
@@ -21,6 +21,7 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "pretest": "esbuild --platform=node src/deps.ts --bundle --outfile=src/deps.bundle.js",
     "clean": "rm -rf ./lib && mkdir -p ./lib && cp -r ./download ./lib/",
     "build": "npm run clean && npm run build:esm && npm run build:cjs && npm run copy:types",
     "build:esm": "tsc -p ./tsconfig.esm.json && mv lib/esm/index.js lib/esm/index.mjs",
@@ -52,8 +53,9 @@
     "@types/js-yaml": "^4.0.5",
     "@types/node": "^18.15.0",
     "docker-compose": "^0.23.19",
+    "esbuild": "^0.17.11",
     "fs-extra": "^11.1.0",
-    "get-port": "5.0.0",
+    "get-port": "^6.1.2",
     "js-yaml": "^4.1.0",
     "os": "^0.1.2",
     "path": "^0.12.7"
