@@ -30,7 +30,8 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/deps.ts
 var deps_exports = {};
 __export(deps_exports, {
-  default: () => deps_default
+  default: () => deps_default,
+  portNumbers: () => portNumbers
 });
 module.exports = __toCommonJS(deps_exports);
 
@@ -47,6 +48,8 @@ var lockedPorts = {
   young: /* @__PURE__ */ new Set()
 };
 var releaseOldLockedPortsIntervalMs = 1e3 * 15;
+var minPort = 1024;
+var maxPort = 65535;
 var interval;
 var getLocalHosts = () => {
   const interfaces = import_node_os.default.networkInterfaces();
@@ -145,8 +148,30 @@ async function getPorts(options) {
   }
   throw new Error("No available ports found");
 }
+function portNumbers(from, to) {
+  if (!Number.isInteger(from) || !Number.isInteger(to)) {
+    throw new TypeError("`from` and `to` must be integer numbers");
+  }
+  if (from < minPort || from > maxPort) {
+    throw new RangeError(`'from' must be between ${minPort} and ${maxPort}`);
+  }
+  if (to < minPort || to > maxPort) {
+    throw new RangeError(`'to' must be between ${minPort} and ${maxPort}`);
+  }
+  if (from > to) {
+    throw new RangeError("`to` must be greater than or equal to `from`");
+  }
+  const generator = function* (from2, to2) {
+    for (let port = from2; port <= to2; port++) {
+      yield port;
+    }
+  };
+  return generator(from, to);
+}
 
 // src/deps.ts
 var deps_default = getPorts;
 // Annotate the CommonJS export names for ESM import in node:
-0 && (module.exports = {});
+0 && (module.exports = {
+  portNumbers
+});

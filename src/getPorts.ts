@@ -1,7 +1,7 @@
 import { _ports_ } from './constants/yml';
 
 //@ts-ignore
-import getPort from './deps.bundle.js';
+import getPort, { portNumbers } from './deps.bundle.js';
 // I made up the second number for all of these... it's the start port +200
 const DEFAULT_BROKER_PORT = 7771;
 const DEFAULT_BROKER_JMX_PORT = 9992;
@@ -23,7 +23,7 @@ export async function getPorts(
 
   for (count; count > 0; count--) {
     const newPort = await getPort({
-      port: getPort.makeRange(firstPort, maxPort),
+      port: portNumbers(firstPort, maxPort),
     });
     firstPort = newPort;
     availablePorts.push(newPort);
