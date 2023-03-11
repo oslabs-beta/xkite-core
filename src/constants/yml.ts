@@ -18,7 +18,7 @@ import {
   YAMLConfig,
 } from '../types/yml';
 
-export const downloadDir = path.join(__dirname, '../../../download');
+export const downloadDir = path.join(__dirname, '../../download');
 export const network = 'localhost'; //change to 0.0.0.0 to expose ports globally
 export const _ports_: YAMLServicesDefaultSetup = {
   postgresql: { internal: 5432, external: 5432 },

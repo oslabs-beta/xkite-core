@@ -1,6 +1,6 @@
 import path from 'path';
 import { KiteConfig } from '../types/kite';
-import { _ports_ } from './yml';
+import { downloadDir, _ports_ } from './yml';
 export const MAX_NUMBER_OF_BROKERS = 50;
 export const MAX_NUMBER_OF_ZOOKEEPERS = 1000;
 
@@ -53,6 +53,6 @@ export enum KiteServerState {
   Disconnected = 'Disconnected',
   Connected = 'Connected',
 }
-export const configFilePath = path.join(__dirname, '../download/config');
+export const configFilePath = path.resolve(downloadDir, 'config');
 
 export default defaultCfg;
