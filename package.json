@@ -1,8 +1,8 @@
 {
   "name": "xkite-core",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Core library for xkite application",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-spring": "mvn -f ./src/springApp clean package && mv ./src/springApp/target/*.jar ./download/spring/app.jar",

@@ -1,13 +1,12 @@
 import path from 'path';
 import fs from 'fs-extra';
 import compose from 'docker-compose';
-import ymlGenerator from '@ymlgenerator';
+import ymlGenerator from './ymlgenerator';
 const zipper = require('zip-local');
-// import Monitor from '@/common/monitor/monitor';
 import { KiteState, KiteServerState } from './constants';
 import defaultCfg, { configFilePath } from './constants';
 import { getPorts } from './getPorts';
-import { _ports_ } from '@ymlgenerator/constants';
+import { _ports_ } from './ymlgenerator/constants';
 const downloadDir = path.join(process.cwd(), './download');
 const configPath = path.join(downloadDir, 'docker-compose.yml');
 const zipPath = path.join(downloadDir, 'pipeline.zip');
@@ -469,7 +468,6 @@ function KiteCreator() {
         await deployServer();
       } else {
         await deployLocal();
-        // Monitor.initiate();
       }
     },
 
