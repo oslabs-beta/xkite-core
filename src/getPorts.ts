@@ -1,20 +1,16 @@
-import * as yml from './constants/yml.js';
-const { _ports_ } = yml;
+import * as consts from './constants/yml.js';
+const { _ports_ } = consts;
 
 //@ts-ignore
-import getPort, { portNumbers } from './deps.bundle.js';
-// I made up the second number for all of these... it's the start port +200
-const DEFAULT_BROKER_PORT = 7771;
-const DEFAULT_BROKER_JMX_PORT = 9992;
-const DEFAULT_ZOOKEEPER_PORT = 8881;
-const DEFAULT_JMX_PORT = 5951;
-const DEFAULT_SPRING_PORT = 8030;
+import { portNumbers } from './deps.bundle.js';
+//@ts-ignore
+const getPorts = require('./deps.bundle.js').default;
 
 export function getDefaultPorts(type: string, count: number) {
   return _ports_;
 }
 
-export default async function getPorts(
+export default async function getAvailablePorts(
   firstPort: number,
   count: number
 ): Promise<number[]> {
@@ -23,9 +19,7 @@ export default async function getPorts(
   const maxPort = firstPort + 200;
 
   for (count; count > 0; count--) {
-    const newPort = await getPort({
-      port: portNumbers(firstPort, maxPort),
-    });
+    const newPort = await getPorts({ port: portNumbers(firstPort, maxPort) });
     firstPort = newPort;
     availablePorts.push(newPort);
   }

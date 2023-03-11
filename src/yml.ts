@@ -31,7 +31,7 @@ import {
   KiteKafkaCfg,
   KiteSetup,
   sinkCfg,
-} from './types/kite.js';
+} from './types/index.js';
 
 const dependencies: string[] = [];
 const setup: KiteSetup = {

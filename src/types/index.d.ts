@@ -1,8 +1,136 @@
+// types/common/kite.d.ts
+
+export interface KiteConfig {
+  kafka: KiteKafkaCfg;
+  db?: dbCfg;
+  sink?: sinkCfg;
+  grafana?: grafanaCfg;
+  prometheus?: prometheusCfg;
+}
+
+export interface dbCfg {
+  name: 'postgresql' | 'ksql';
+  port?: number | undefined;
+  postgresql?: {
+    username: string;
+    password: string;
+    dbname: string;
+  };
+  ksql?: {
+    schema_port?: number | undefined;
+  };
+  kafkaconnect?: {
+    port?: number | undefined;
+  };
+}
+
+export interface sinkCfg {
+  name: 'jupyter' | 'spark';
+  port?: number;
+  rpc_port?: number;
+  kafkaconnect?: {
+    port?: number | undefined;
+  };
+}
+
+export interface grafanaCfg {
+  port?: number | undefined;
+}
+
+export interface prometheusCfg {
+  port?: number | undefined;
+  scrape_interval?: number; //seconds
+  evaluation_interval?: number; //seconds
+}
+
+export interface KiteKafkaCfg {
+  brokers: {
+    size: number;
+    id?: number[]; // [101, 102,...]
+    replicas?: number; // must be less than size
+    ports?: {
+      brokers?: number[] | undefined; // external ports to access brokers
+      metrics?: number | undefined; // confluent metric interface on docker net
+      jmx?: number[] | undefined; // broker interface with jmx on docker net
+    };
+  };
+  zookeepers: {
+    size: number;
+    ports?: {
+      peer?: {
+        //does not need to be configurable, docker net only
+        internal: number; // 2888
+        external: number; // 3888
+      };
+      client?: number[] | undefined; // [2181, 2182] //external
+    };
+  };
+  jmx?: {
+    ports?: number[] | undefined; // external host port to interface with port
+  };
+  spring?: {
+    port?: number | undefined; // external host port to interface with 8080
+  };
+}
+
+export interface KiteSetup {
+  dBSetup?: dbCfg;
+  kafkaSetup: KafkaSetup;
+  spring?: { port: number };
+  prometheus?: { port: number };
+  grafana?: { port: number };
+  zookeeper?: { ports: number[] };
+  jmx?: { ports: number[] };
+  jupyter?: { port: number };
+  spark?: { port: number[] };
+  docker?: { services: string[] };
+}
+
+export interface KiteConfigFile {
+  header?: any;
+  fileStream: Buffer;
+}
+
+export interface KafkaSetup {
+  clientId: string;
+  brokers: Array<string>;
+  ssl?: boolean;
+}
+
+export type MAX_NUMBER_OF_BROKERS = 50;
+export type MAX_NUMBER_OF_ZOOKEEPERS = 1000;
+
+export type KiteState =
+  | 'Unknown'
+  | 'Init'
+  | 'Configured'
+  | 'Running'
+  | 'Paused'
+  | 'Shutdown';
+export type KiteServerState = 'Disconnected' | 'Connected';
+
+export interface KiteClass {
+  defaultCfg: KiteConfig;
+  configure: (arg?: string | KiteConfig | undefined) => Promise<void>;
+  deploy: (arg?: any) => Promise<void>;
+  getSetup: () => any;
+  getKafkaSetup: () => any;
+  getDBSetup: () => any;
+  getConfig: () => any;
+  getConfigFile: () => any;
+  getKiteState: () => KiteState;
+  getKiteServerState: () => KiteServerState;
+  getPackageBuild: () => Promise<KiteConfigFile>;
+  disconnect: () => Promise<any>;
+  shutdown: () => Promise<any>;
+  pause: (service?: string[] | undefined) => Promise<any>;
+  unpause: (service?: string[] | undefined) => Promise<any>;
+}
 // types/yaml.d.ts
 
-type YAMLGenerator = (k: KiteConfig) => KiteSetup;
+export type YAMLGenerator = (k: KiteConfig) => KiteSetup;
 
-interface YAMLConfig {
+export interface YAMLConfig {
   services: {
     [k: string]: BaseCfg | KafkaBrokerCfg | ZooKeeperCfg | JMXConfg | undefined;
     postgresql?: PGConfig;
@@ -22,7 +150,7 @@ interface YAMLConfig {
   };
 }
 
-interface VolumeCfg {
+export interface VolumeCfg {
   driver: 'local' | 'global';
   external?: 'true' | 'false';
   labels?: {};
@@ -37,7 +165,7 @@ interface VolumeCfg {
   };
 }
 
-interface YAMLServicesDefaultSetup {
+export interface YAMLServicesDefaultSetup {
   postgresql: PortForward;
   ksql: PortForward;
   ksql_schema: PortForward;
@@ -60,24 +188,24 @@ interface YAMLServicesDefaultSetup {
   jmx: PortForward;
   docker: PortForward;
 }
-type PortForward = {
+export type PortForward = {
   internal: number;
   external: number;
 };
 
-interface YAMLDataSetup {
+export interface YAMLDataSetup {
   dbSrc: string;
   env: YAMLDataEnv;
 }
 
-interface YAMLDataEnv {
+export interface YAMLDataEnv {
   username: string;
   password: string;
   dbName: string;
   URI: string;
 }
 
-interface PROMConfig {
+export interface PROMConfig {
   global: {
     scrape_interval: string;
     evaluation_interval: string;
@@ -96,9 +224,9 @@ interface PROMConfig {
   ];
 }
 
-interface PrometheusConfig extends BaseCfg {}
+export interface PrometheusConfig extends BaseCfg {}
 
-interface KafkaConnectCfg extends BaseCfg {
+export interface KafkaConnectCfg extends BaseCfg {
   environment: {
     CONNECT_BOOTSTRAP_SERVERS: string;
     CONNECT_REST_PORT: number;
@@ -117,7 +245,7 @@ interface KafkaConnectCfg extends BaseCfg {
   };
 }
 
-interface KafkaBrokerCfg extends BaseCfg {
+export interface KafkaBrokerCfg extends BaseCfg {
   environment: {
     KAFKA_ZOOKEEPER_CONNECT?: string;
     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: string;
@@ -139,7 +267,7 @@ interface KafkaBrokerCfg extends BaseCfg {
   };
 }
 
-interface ZooKeeperCfg extends BaseCfg {
+export interface ZooKeeperCfg extends BaseCfg {
   environment: {
     ZOOKEEPER_SERVER_ID?: number;
     ZOOKEEPER_CLIENT_PORT: number;
@@ -150,7 +278,7 @@ interface ZooKeeperCfg extends BaseCfg {
   };
 }
 
-interface GrafanaCfg extends BaseCfg {
+export interface GrafanaCfg extends BaseCfg {
   environment: {
     GF_PATHS_DATA: string;
     GF_SECURITY_ALLOW_EMBEDDING: string;
@@ -160,7 +288,7 @@ interface GrafanaCfg extends BaseCfg {
   };
 }
 
-interface PGConfig extends BaseCfg {
+export interface PGConfig extends BaseCfg {
   environment: {
     POSTGRES_PASSWORD: string;
     POSTGRES_USER: string;
@@ -171,7 +299,7 @@ interface PGConfig extends BaseCfg {
 
 //https://docs.ksqldb.io/en/latest/operate-and-deploy/installation/install-ksqldb-with-docker/
 //https://docs.confluent.io/5.2.0/ksql/docs/installation/server-config/config-reference.html
-interface KSQLConfig extends BaseCfg {
+export interface KSQLConfig extends BaseCfg {
   environment: {
     KSQL_BOOTSTRAP_SERVERS: string; //kafka1:9092,kafka2:9093, ...
     KSQL_LISTENERS: string; //localhost:8090
@@ -201,7 +329,7 @@ interface KSQLConfig extends BaseCfg {
 }
 
 //https://github.com/confluentinc/schema-registry-workshop/blob/master/docker-compose.yml
-interface KSQLSchemaCfg extends BaseCfg {
+export interface KSQLSchemaCfg extends BaseCfg {
   environment: {
     SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: string;
     SCHEMA_REGISTRY_HOST_NAME: string; //schemaregistry
@@ -209,7 +337,7 @@ interface KSQLSchemaCfg extends BaseCfg {
   };
 }
 
-interface SpringCfg extends BaseCfg {
+export interface SpringCfg extends BaseCfg {
   command: string;
   environment: {
     JAVA_OPTS: string;
@@ -220,7 +348,7 @@ interface SpringCfg extends BaseCfg {
   };
 }
 
-interface Juypter extends BaseCfg {
+export interface Juypter extends BaseCfg {
   environment: {
     PASSWORD: string;
     USERNAME: string;
@@ -231,7 +359,7 @@ interface Juypter extends BaseCfg {
 
 //https://hub.docker.com/r/bitnami/spark/
 // https://dev.to/mvillarrealb/creating-a-spark-standalone-cluster-with-docker-and-docker-compose-2021-update-6l4
-interface SparkCfg extends BaseCfg {
+export interface SparkCfg extends BaseCfg {
   environment: {
     SPARK_LOCAL_IP?: string;
     SPARK_MODE: 'master' | 'worker';
@@ -240,7 +368,7 @@ interface SparkCfg extends BaseCfg {
 }
 
 // https://hub.docker.com/r/sscaling/jmx-prometheus-exporter
-interface JMXConfg extends BaseCfg {
+export interface JMXConfg extends BaseCfg {
   environment: {
     SERVICE_PORT: number;
     JVM_OPTS?: string;
@@ -248,7 +376,7 @@ interface JMXConfg extends BaseCfg {
   };
 }
 
-interface BaseCfg {
+export interface BaseCfg {
   command?: Array<string> | string;
   restart?: string;
   image: string;

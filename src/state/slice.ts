@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { KiteState, KiteServerState } from '../constants/kite.js';
-import defaultCfg, { configFilePath } from '../constants/kite.js';
+import * as consts from '../constants/kite.js';
+import type { KiteState, KiteServerState } from '../types/index.js';
+const { defaultCfg, configFilePath } = consts;
 import path from 'path';
 import fs from 'fs-extra';
 const initialState = readConfigFromFile();
@@ -32,8 +33,8 @@ const kiteSlice = createSlice({
           state.serviceState[i] = running;
       }
       if (state.serviceState.every((el: boolean) => el))
-        state.state = KiteState.Running;
-      else state.state = KiteState.Paused;
+        state.state = <KiteState>'Running';
+      else state.state = <KiteState>'Paused';
       writeConfigToFile(state);
     },
     setSetup: (state, action) => {
@@ -97,8 +98,8 @@ function readConfigFromFile(): any {
     setup: {}, //Promise<KiteSetup> | KiteSetup;
     kafkaSetup: {}, //KafkaSetup
     dBSetup: {}, //dbCfg
-    state: KiteState.Init,
-    serverState: KiteServerState.Disconnected,
+    state: <KiteState>'Init',
+    serverState: <KiteState>'Disconnected',
     configFile: {}, //Promise<KiteConfigFile> | KiteConfigFile;
   };
   try {

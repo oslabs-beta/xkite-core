@@ -3,21 +3,24 @@ import fs from 'fs-extra';
 import compose from 'docker-compose';
 import ymlGenerator from './yml.js';
 const zipper = require('zip-local');
-import {
+import type {
+  KiteConfig,
+  KiteConfigFile,
   KiteState,
   KiteServerState,
-  MAX_NUMBER_OF_BROKERS,
-  MAX_NUMBER_OF_ZOOKEEPERS,
-} from './constants/kite.js';
-import defaultCfg, { configFilePath } from './constants/kite.js';
-import getPorts from './getPorts.js';
+  KiteClass,
+} from './types/index.js';
+import * as consts from './constants/kite.js';
+const { defaultCfg } = consts;
 import * as yml from './constants/yml.js';
 const { _ports_, downloadDir } = yml;
+import getAvailablePorts from './getPorts.js';
 const configPath = path.join(downloadDir, 'docker-compose.yml');
 const zipPath = path.join(downloadDir, 'pipeline.zip');
 
 import store from './state/store.js';
-import {
+import * as slice from './state/slice.js';
+const {
   setPackageBuild,
   setConfig,
   setServer,
@@ -26,10 +29,9 @@ import {
   setServerState,
   setServiceState,
   setConfigFile,
-} from './state/slice.js';
-import { KiteConfig, KiteConfigFile } from './types/kite.js';
+} = slice;
 
-function KiteCreator() {
+function KiteCreator(): KiteClass {
   //Private Variable / Methods:
   const selectedPorts = new Set<number>();
   /**
@@ -40,8 +42,8 @@ function KiteCreator() {
    */
   async function configServer(server: string) {
     store.dispatch(setServer(server));
-    store.dispatch(setState(KiteState.Init));
-    store.dispatch(setServerState(KiteServerState.Disconnected));
+    store.dispatch(setState(<KiteState>'Init'));
+    store.dispatch(setServerState(<KiteServerState>'Disconnected'));
     try {
       const res = [
         fetch(`${server}/api/kite/getConfig`),
@@ -53,7 +55,7 @@ function KiteCreator() {
       store.dispatch(setSetup((await res[1]).json()));
       store.dispatch(setConfigFile((await res[2]).json()));
       store.dispatch(setPackageBuild((await res[3]).json()));
-      store.dispatch(setServerState(KiteServerState.Connected));
+      store.dispatch(setServerState(<KiteServerState>'Connected'));
     } catch (err) {
       console.error(`error fetching from ${server}/api/:\n${err}`);
     }
@@ -69,7 +71,7 @@ function KiteCreator() {
       console.log(args);
       const retPorts: number[] = [];
       for (const port of args) {
-        const avPort = await getPorts(port, 1);
+        const avPort = await getAvailablePorts(port, 1);
         let j = 0;
         while (j < avPort.length) {
           if (!selectedPorts.has(avPort[j])) {
@@ -92,7 +94,7 @@ function KiteCreator() {
 
   async function checkPort(port: number) {
     try {
-      const avPort = await getPorts(port, 1);
+      const avPort = await getAvailablePorts(port, 1);
       return avPort[0];
     } catch (error) {
       console.error('Error occurred while checking available ports!', error);
@@ -248,8 +250,8 @@ function KiteCreator() {
    */
   async function configLocal(config: KiteConfig) {
     await checkConfigPorts(config);
-    store.dispatch(setState(KiteState.Init));
-    store.dispatch(setServerState(KiteServerState.Disconnected));
+    store.dispatch(setState(<KiteState>'Init'));
+    store.dispatch(setServerState(<KiteServerState>'Disconnected'));
     // create config + setup
     try {
       // generate the docker config
@@ -264,7 +266,7 @@ function KiteCreator() {
       };
       const fileStream = fs.readFileSync(configPath, 'utf-8');
       store.dispatch(setConfigFile({ header, fileStream }));
-      store.dispatch(setState(KiteState.Configured));
+      store.dispatch(setState(<KiteState>'Configured'));
       console.log('yaml configuration complete...');
     } catch (err) {
       console.error(
@@ -281,7 +283,7 @@ function KiteCreator() {
     try {
       const { server } = store.getState();
       await fetch(`${server}/api/kite/deploy`);
-      store.dispatch(setState(KiteState.Running));
+      store.dispatch(setState(<KiteState>'Running'));
     } catch (err) {
       console.error(`Kite deployment failed:\n${JSON.stringify(err)}`);
     }
@@ -302,7 +304,7 @@ function KiteCreator() {
         //   console.log('job in progress: ', chunk.toString());
         // },
       });
-      store.dispatch(setState(KiteState.Running));
+      store.dispatch(setState(<KiteState>'Running'));
       console.log('docker deployment successful');
     } catch (err) {
       console.error(`Kite deployment failed:\n${JSON.stringify(err)}`);
@@ -433,7 +435,7 @@ function KiteCreator() {
   return {
     //Public Variables / Methods:
 
-    defaultCfg,
+    defaultCfg: defaultCfg,
 
     /**
      * @param {string | KiteConfig} arg
@@ -469,7 +471,7 @@ function KiteCreator() {
     deploy: async function (arg?: any) {
       // if server active deployment happens there...
       const { serverState } = store.getState();
-      if (serverState === KiteServerState.Connected) {
+      if (serverState === <KiteServerState>'Connected') {
         await deployServer();
       } else {
         await deployLocal();
@@ -570,13 +572,13 @@ function KiteCreator() {
      */
     disconnect: async function (): Promise<any> {
       const { serverState } = store.getState();
-      if (serverState === KiteServerState.Connected) {
-        store.dispatch(setServerState(KiteServerState.Disconnected));
+      if (serverState === <KiteServerState>'Connected') {
+        store.dispatch(setServerState(<KiteServerState>'Disconnected'));
         disconnectServer();
       } else {
         disconnectLocal();
       }
-      store.dispatch(setState(KiteState.Shutdown));
+      store.dispatch(setState(<KiteState>'Shutdown'));
     },
 
     /**
@@ -587,13 +589,13 @@ function KiteCreator() {
      */
     shutdown: async function (): Promise<any> {
       const { serverState } = store.getState();
-      if (serverState === KiteServerState.Connected) {
-        store.dispatch(setServerState(KiteServerState.Disconnected));
+      if (serverState === <KiteServerState>'Connected') {
+        store.dispatch(setServerState(<KiteServerState>'Disconnected'));
         await shutdownServer();
       } else {
         await shutdownLocal();
       }
-      store.dispatch(setState(KiteState.Shutdown));
+      store.dispatch(setState(<KiteState>'Shutdown'));
     },
     /**
      *
@@ -601,8 +603,8 @@ function KiteCreator() {
     pause: async function (service?: string[]): Promise<any> {
       const { serverState, services } = store.getState();
       if (service === undefined) service = services; // default to use all.
-      if (serverState === KiteServerState.Connected) {
-        store.dispatch(setServerState(KiteServerState.Disconnected));
+      if (serverState === <KiteServerState>'Connected') {
+        store.dispatch(setServerState(<KiteServerState>'Disconnected'));
         await pauseServer(service);
       } else {
         await pauseLocal(service);
@@ -615,8 +617,8 @@ function KiteCreator() {
     unpause: async function (service?: string[]): Promise<any> {
       const { serverState, services } = store.getState();
       if (service === undefined) service = services; // default to use all.
-      if (serverState === KiteServerState.Connected) {
-        store.dispatch(setServerState(KiteServerState.Disconnected));
+      if (serverState === <KiteServerState>'Connected') {
+        store.dispatch(setServerState(<KiteServerState>'Disconnected'));
         await unpauseServer(service);
       } else {
         await unpauseLocal(service);
@@ -625,38 +627,4 @@ function KiteCreator() {
     },
   };
 }
-const Kite = KiteCreator();
-export default Kite;
-
-import {
-  dbCfg,
-  sinkCfg,
-  grafanaCfg,
-  prometheusCfg,
-  KiteKafkaCfg,
-  KiteSetup,
-  KafkaSetup,
-} from './types/kite.js';
-import { YAMLConfig, YAMLServicesDefaultSetup } from './types/yml.js';
-export {
-  KiteConfig,
-  dbCfg,
-  sinkCfg,
-  grafanaCfg,
-  prometheusCfg,
-  KiteKafkaCfg,
-  KiteSetup,
-  KiteConfigFile,
-  KafkaSetup,
-  defaultCfg,
-  KiteState,
-  KiteServerState,
-  configFilePath,
-  YAMLConfig,
-  ymlGenerator,
-  downloadDir,
-  YAMLServicesDefaultSetup,
-  _ports_,
-  MAX_NUMBER_OF_BROKERS,
-  MAX_NUMBER_OF_ZOOKEEPERS,
-};
+export const Kite = KiteCreator();

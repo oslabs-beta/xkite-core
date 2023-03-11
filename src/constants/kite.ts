@@ -1,11 +1,9 @@
 import path from 'path';
-import { KiteConfig } from '../types/kite.js';
+import { KiteConfig } from '../types/index.js';
 import * as yml from './yml.js';
 const { downloadDir, _ports_ } = yml;
-export const MAX_NUMBER_OF_BROKERS = 50;
-export const MAX_NUMBER_OF_ZOOKEEPERS = 1000;
 
-const defaultCfg: KiteConfig = {
+export const defaultCfg: KiteConfig = {
   kafka: {
     brokers: {
       size: 2,
@@ -42,18 +40,4 @@ const defaultCfg: KiteConfig = {
   },
 };
 
-export enum KiteState {
-  Init = 'Init',
-  Configured = 'Configured',
-  Running = 'Running',
-  Paused = 'Paused',
-  Shutdown = 'Shutdown',
-}
-
-export enum KiteServerState {
-  Disconnected = 'Disconnected',
-  Connected = 'Connected',
-}
 export const configFilePath = path.resolve(downloadDir, 'config');
-
-export default defaultCfg;

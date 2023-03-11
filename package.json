@@ -1,6 +1,6 @@
 {
   "name": "xkite-core",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "Core library for xkite application",
   "types": "./lib/cjs/types/index.d.ts",
   "main": "./lib/cjs/index.js",
@@ -26,9 +26,9 @@
     "build": "npm run pretest && npm run clean && npm run build:esm && npm run build:cjs && npm run copy:types",
     "build:esm": "tsc -p ./tsconfig.esm.json && mv lib/esm/index.js lib/esm/index.mjs",
     "build:cjs": "tsc -p ./tsconfig.cjs.json",
-    "copy:types:esm": "cp -r ./src/types lib/esm/types/",
-    "copy:types:cjs": "cp -r ./src/types lib/cjs/types/",
-    "copy:types": "mkdir -p ./lib/esm/types && mkdir -p ./lib/esm/types && npm run copy:types:esm && npm run copy:types:cjs",
+    "copy:types:esm": "cp -r ./src/types/* lib/esm/types/",
+    "copy:types:cjs": "cp -r ./src/types/* lib/cjs/types/",
+    "copy:types": "mkdir -p ./lib/cjs/types && mkdir -p ./lib/esm/types && npm run copy:types:esm && npm run copy:types:cjs",
     "prepack": "npm run build",
     "build-spring": "mvn -f ./src/springApp clean package && mv ./src/springApp/target/*.jar ./download/spring/app.jar",
     "push": "npm publish --access public"
@@ -59,6 +59,22 @@
     "get-port": "^6.1.2",
     "js-yaml": "^4.1.0",
     "os": "^0.1.2",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "typescript": "^5.1.0-dev.20230311"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.9.3",
+    "@types/fs-extra": "^11.0.1",
+    "@types/get-port": "^4.2.0",
+    "@types/js-yaml": "^4.0.5",
+    "@types/node": "^18.15.0",
+    "docker-compose": "^0.23.19",
+    "esbuild": "^0.17.11",
+    "fs-extra": "^11.1.0",
+    "get-port": "^6.1.2",
+    "js-yaml": "^4.1.0",
+    "os": "^0.1.2",
+    "path": "^0.12.7",
+    "typescript": "^5.1.0-dev.20230311"
   }
 }
