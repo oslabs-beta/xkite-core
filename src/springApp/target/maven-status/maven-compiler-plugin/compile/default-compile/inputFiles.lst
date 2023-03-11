@@ -1,0 +1,13 @@
+/home/zee/Codesmith/OSP/xkite-core/./src/springApp/src/main/java/xkite/KafkaTopicConfig.java
+/home/zee/Codesmith/OSP/xkite-core/./src/springApp/src/main/java/xkite/controllers/ConsumerController.java
+/home/zee/Codesmith/OSP/xkite-core/./src/springApp/src/main/java/xkite/wikimedia/WikimediaChangesHandler.java
+/home/zee/Codesmith/OSP/xkite-core/./src/springApp/src/main/java/xkite/kafka/JsonKafkaConsumer.java
+/home/zee/Codesmith/OSP/xkite-core/./src/springApp/src/main/java/xkite/controllers/JsonMessageController.java
+/home/zee/Codesmith/OSP/xkite-core/./src/springApp/src/main/java/xkite/kafka/KafkaConsumer.java
+/home/zee/Codesmith/OSP/xkite-core/./src/springApp/src/main/java/xkite/controllers/MessageController.java
+/home/zee/Codesmith/OSP/xkite-core/./src/springApp/src/main/java/xkite/payload/KafkaMessage.java
+/home/zee/Codesmith/OSP/xkite-core/./src/springApp/src/main/java/xkite/kafka/KafkaProducer.java
+/home/zee/Codesmith/OSP/xkite-core/./src/springApp/src/main/java/xkite/kafka/JsonKafkaProducer.java
+/home/zee/Codesmith/OSP/xkite-core/./src/springApp/src/main/java/xkite/wikimedia/WikimediaChangesProducer.java
+/home/zee/Codesmith/OSP/xkite-core/./src/springApp/src/main/java/xkite/controllers/TopicController.java
+/home/zee/Codesmith/OSP/xkite-core/./src/springApp/src/main/java/xkite/SpringbootKafkaApplication.java

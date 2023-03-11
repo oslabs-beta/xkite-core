@@ -71,3 +71,5 @@ download/pipeline.zip
 # generated config file
 download/config/cfg.json
 
+# Java generated files
+src/common/springApp/target/*

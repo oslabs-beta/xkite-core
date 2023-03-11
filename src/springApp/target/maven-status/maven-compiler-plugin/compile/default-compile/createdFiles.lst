@@ -1,0 +1,13 @@
+xkite/wikimedia/WikimediaChangesProducer.class
+xkite/KafkaTopicConfig.class
+xkite/SpringbootKafkaApplication.class
+xkite/controllers/ConsumerController.class
+xkite/kafka/JsonKafkaConsumer.class
+xkite/kafka/KafkaProducer.class
+xkite/wikimedia/WikimediaChangesHandler.class
+xkite/payload/KafkaMessage.class
+xkite/controllers/MessageController.class
+xkite/kafka/KafkaConsumer.class
+xkite/kafka/JsonKafkaProducer.class
+xkite/controllers/TopicController.class
+xkite/controllers/JsonMessageController.class
