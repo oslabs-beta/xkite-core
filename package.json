@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-spring": "mvn -f ./src/springApp clean package && mv ./src/springApp/target/*.jar ./download/spring/app.jar",
-    "build": "npm run build-spring && npx tsc"
+    "build": "npx tsc"
   },
   "keywords": [
     "kafka",
