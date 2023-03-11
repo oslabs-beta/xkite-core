@@ -1,4 +1,3 @@
-import getPort, { portNumbers } from 'get-port';
 import { _ports_ } from './ymlgenerator/constants';
 // I made up the second number for all of these... it's the start port +200
 const DEFAULT_BROKER_PORT = 7771;
@@ -19,6 +18,10 @@ export async function getPorts(
   // Arbitrary cap to try to keep port numbers in a relatively sane range
   const maxPort = firstPort + 200;
 
+  const gp = await import("get-port");
+  const getPort = gp.default;
+  const portNumbers = gp.portNumbers;
+
   for (count; count > 0; count--) {
     const newPort = await getPort({ port: portNumbers(firstPort, maxPort) });
     firstPort = newPort;
@@ -26,8 +29,3 @@ export async function getPorts(
   }
   return availablePorts;
 }
-
-// (async () => {
-//   const myPorts = await getPorts(9089, 5);
-//   console.log(myPorts);
-// })();

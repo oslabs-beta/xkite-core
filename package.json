@@ -2,11 +2,36 @@
   "name": "xkite-core",
   "version": "1.0.4",
   "description": "Core library for xkite application",
-  "main": "dist/index.js",
+  "types": "./lib/cjs/types/index.d.ts",
+  "main": "./lib/cjs/index.js",
+  "exports": {
+    ".": {
+      "import": {
+         "types": "./lib/esm/types/index.d.ts",
+         "default": "./lib/esm/index.mjs"
+      },
+      "require": {
+         "types": "./lib/cjs/types/index.d.ts",
+         "default": "./lib/cjs/index.js"
+      }
+   }
+  },
+  "files": [
+    "lib/**/*"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build-spring": "mvn -f ./src/springApp clean package && mv ./src/springApp/target/*.jar ./download/spring/app.jar",
-    "build": "npx tsc"
+    "clean": "rm -rf ./lib",
+    "build": "npm run clean && npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc -p ./tsconfig.esm.json && mv lib/esm/index.js lib/esm/index.mjs",
+    "build:cjs": "tsc -p ./tsconfig.cjs.json",
+    "prepack": "npm run build",
+    "build-spring": "mvn -f ./src/springApp clean package && mv ./src/springApp/target/*.jar ./download/spring/app.jar"
+  },
+  "homepage": "https://github.com/oslabs-beta/xkite-core",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oslabs-beta/xkite-core"
   },
   "keywords": [
     "kafka",
@@ -15,7 +40,7 @@
     "ksql",
     "kafkajs"
   ],
-  "author": "Zahara Aviv",
+  "author": "Zahara Aviv <zahara.aviv@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "@reduxjs/toolkit": "^1.9.3",
