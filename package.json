@@ -29,7 +29,7 @@
     "copy:types:cjs": "mkdir -p lib/cjs/types && cp -r ./src/types/* lib/cjs/types/",
     "prepack": "npm run build",
     "build-spring": "mvn -f ./src/springApp clean package && mv ./src/springApp/target/*.jar ./download/spring/app.jar",
-    "publish": "npm publish --access public"
+    "push": "npm publish --access public"
   },
   "homepage": "https://github.com/oslabs-beta/xkite-core",
   "repository": {
