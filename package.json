@@ -1,6 +1,6 @@
 {
   "name": "xkite-core",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "Core library for xkite application",
   "types": "./lib/cjs/types/index.d.ts",
   "main": "./lib/cjs/index.js",
