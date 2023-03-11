@@ -1,4 +1,4 @@
-import { _ports_ } from './constants/yml';
+import { _ports_ } from './constants/yml.js';
 
 //@ts-ignore
 import getPort, { portNumbers } from './deps.bundle.js';

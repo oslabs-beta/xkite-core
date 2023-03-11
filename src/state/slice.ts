@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { KiteState, KiteServerState } from '../constants/kite';
-import defaultCfg, { configFilePath } from '../constants/kite';
+import { KiteState, KiteServerState } from '../constants/kite.js';
+import defaultCfg, { configFilePath } from '../constants/kite.js';
 import path from 'path';
 import fs from 'fs-extra';
 const initialState = readConfigFromFile();

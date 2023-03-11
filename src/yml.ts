@@ -23,14 +23,14 @@ import {
   _ports_,
   KAFKA_CONNECT_SRC,
   KAFKA_CONNECT_SINK,
-} from './constants/yml';
+} from './constants/yml.js';
 import {
   dbCfg,
   KiteConfig,
   KiteKafkaCfg,
   KiteSetup,
   sinkCfg,
-} from './types/kite';
+} from './types/kite.js';
 
 const dependencies: string[] = [];
 const setup: KiteSetup = {

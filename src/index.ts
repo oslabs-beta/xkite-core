@@ -1,21 +1,21 @@
 import path from 'path';
 import fs from 'fs-extra';
 import compose from 'docker-compose';
-import ymlGenerator from './yml';
+import ymlGenerator from './yml.js';
 const zipper = require('zip-local');
 import {
   KiteState,
   KiteServerState,
   MAX_NUMBER_OF_BROKERS,
   MAX_NUMBER_OF_ZOOKEEPERS,
-} from './constants/kite';
-import defaultCfg, { configFilePath } from './constants/kite';
-import { getPorts } from './getPorts';
-import { _ports_, downloadDir } from './constants/yml';
+} from './constants/kite.js';
+import defaultCfg, { configFilePath } from './constants/kite.js';
+import { getPorts } from './getPorts.js';
+import { _ports_, downloadDir } from './constants/yml.js';
 const configPath = path.join(downloadDir, 'docker-compose.yml');
 const zipPath = path.join(downloadDir, 'pipeline.zip');
 
-import store from './state/store';
+import store from './state/store.js';
 import {
   setPackageBuild,
   setConfig,
@@ -25,8 +25,8 @@ import {
   setServerState,
   setServiceState,
   setConfigFile,
-} from './state/slice';
-import { KiteConfig, KiteConfigFile } from './types/kite';
+} from './state/slice.js';
+import { KiteConfig, KiteConfigFile } from './types/kite.js';
 
 function KiteCreator() {
   //Private Variable / Methods:
@@ -635,8 +635,8 @@ import {
   KiteKafkaCfg,
   KiteSetup,
   KafkaSetup,
-} from './types/kite';
-import { YAMLConfig, YAMLServicesDefaultSetup } from './types/yml';
+} from './types/kite.js';
+import { YAMLConfig, YAMLServicesDefaultSetup } from './types/yml.js';
 export {
   KiteConfig,
   dbCfg,
