@@ -6,8 +6,7 @@ const zipper = require('zip-local');
 import { KiteState, KiteServerState } from './constants';
 import defaultCfg, { configFilePath } from './constants';
 import { getPorts } from './getPorts';
-import { _ports_ } from './ymlgenerator/constants';
-const downloadDir = path.join(process.cwd(), './download');
+import { _ports_, downloadDir } from './ymlgenerator/constants';
 const configPath = path.join(downloadDir, 'docker-compose.yml');
 const zipPath = path.join(downloadDir, 'pipeline.zip');
 
@@ -62,7 +61,7 @@ function KiteCreator() {
   async function checkPorts(args: number[]) {
     try {
       console.log(args);
-      const retPorts = [];
+      const retPorts: number[] = [];
       for (const port of args) {
         const avPort = await getPorts(port, 1);
         let j = 0;
@@ -622,3 +621,8 @@ function KiteCreator() {
 }
 const Kite = KiteCreator();
 export default Kite;
+export * from './types';
+export * from './constants';
+export * from './ymlgenerator/types';
+export * from './ymlgenerator/constants';
+export * from './ymlgenerator';
