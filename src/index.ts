@@ -108,8 +108,9 @@ function KiteCreator(): KiteClass {
    * if ports in use modify
    * @param cfg
    */
-  async function checkConfigPorts(cfg: KiteConfig) {
+  async function checkConfigPorts(config: KiteConfig): Promise<KiteConfig> {
     try {
+      let cfg = Object.assign({}, config);
       let kafka: KiteKafkaCfg = {
         ...cfg.kafka,
         brokers: {
@@ -268,8 +269,10 @@ function KiteCreator(): KiteClass {
         // assign the parameters
         cfg = { ...cfg, prometheus: { ...cfg.prometheus, ...prometheus } };
       }
+      return cfg;
     } catch (error) {
       console.error('Error occurred while checking config ports!', error);
+      return config;
     }
   }
   /**
@@ -280,15 +283,15 @@ function KiteCreator(): KiteClass {
    * file locally.
    */
   async function configLocal(config: KiteConfig) {
-    await checkConfigPorts(config);
+    const cfg = await checkConfigPorts(config);
     store.dispatch(setState(<KiteState>'Init'));
     store.dispatch(setServerState(<KiteServerState>'Disconnected'));
     // create config + setup
     try {
       // generate the docker config
       const generate: Function = ymlGenerator();
-      store.dispatch(setConfig(config));
-      store.dispatch(setSetup(generate(config)));
+      store.dispatch(setConfig(cfg));
+      store.dispatch(setSetup(generate(cfg)));
       // package the download, comment out or make optional fro time optimization
       store.dispatch(setPackageBuild(zipPath));
       const header = {
@@ -300,9 +303,7 @@ function KiteCreator(): KiteClass {
       store.dispatch(setState(<KiteState>'Configured'));
       console.log('yaml configuration complete...');
     } catch (err) {
-      console.error(
-        `KITE failed to initialize: ${err}\nConfiguration ${config}`
-      );
+      console.error(`KITE failed to initialize: ${err}\nConfiguration ${cfg}`);
     }
   }
 
