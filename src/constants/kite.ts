@@ -1,6 +1,7 @@
 import path from 'path';
 import { KiteConfig } from '../types/kite.js';
-import { downloadDir, _ports_ } from './yml.js';
+import * as yml from './yml.js';
+const { downloadDir, _ports_ } = yml;
 export const MAX_NUMBER_OF_BROKERS = 50;
 export const MAX_NUMBER_OF_ZOOKEEPERS = 1000;
 

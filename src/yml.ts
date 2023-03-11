@@ -3,7 +3,8 @@ import fs from 'fs-extra';
 import path from 'path';
 import os from 'os';
 
-import {
+import * as yml from './constants/yml.js';
+const {
   YAML,
   SPRING,
   SPARK,
@@ -23,7 +24,7 @@ import {
   _ports_,
   KAFKA_CONNECT_SRC,
   KAFKA_CONNECT_SINK,
-} from './constants/yml.js';
+} = yml;
 import {
   dbCfg,
   KiteConfig,

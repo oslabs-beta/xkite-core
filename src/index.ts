@@ -11,7 +11,8 @@ import {
 } from './constants/kite.js';
 import defaultCfg, { configFilePath } from './constants/kite.js';
 import { getPorts } from './getPorts.js';
-import { _ports_, downloadDir } from './constants/yml.js';
+import * as yml from './constants/yml.js';
+const { _ports_, downloadDir } = yml;
 const configPath = path.join(downloadDir, 'docker-compose.yml');
 const zipPath = path.join(downloadDir, 'pipeline.zip');
 
