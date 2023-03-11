@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { KiteState, KiteServerState } from './constants';
-import defaultCfg, { configFilePath } from './constants';
+import { KiteState, KiteServerState } from './types/constants';
+import defaultCfg, { configFilePath } from './types/constants';
 import path from 'path';
 import fs from 'fs-extra';
 const initialState = readConfigFromFile();
@@ -58,8 +58,8 @@ const kiteSlice = createSlice({
     setConfigFile: (state, action) => {
       state.configFile = Object.assign(action.payload);
       writeConfigToFile(state);
-    }
-  }
+    },
+  },
 });
 
 const {
@@ -70,7 +70,7 @@ const {
   setState,
   setServerState,
   setServiceState,
-  setConfigFile
+  setConfigFile,
 } = kiteSlice.actions;
 
 export {
@@ -81,7 +81,7 @@ export {
   setState,
   setServerState,
   setServiceState,
-  setConfigFile
+  setConfigFile,
 };
 
 export default kiteSlice.reducer;
@@ -99,7 +99,7 @@ function readConfigFromFile(): any {
     dBSetup: {}, //dbCfg
     state: KiteState.Init,
     serverState: KiteServerState.Disconnected,
-    configFile: {} //Promise<KiteConfigFile> | KiteConfigFile;
+    configFile: {}, //Promise<KiteConfigFile> | KiteConfigFile;
   };
   try {
     fs.mkdirSync(path.resolve(configFilePath), { recursive: true });

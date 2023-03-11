@@ -1,4 +1,4 @@
-import { _ports_ } from './ymlgenerator/constants';
+import { _ports_ } from './types/yml/constants';
 // I made up the second number for all of these... it's the start port +200
 const DEFAULT_BROKER_PORT = 7771;
 const DEFAULT_BROKER_JMX_PORT = 9992;
@@ -18,7 +18,7 @@ export async function getPorts(
   // Arbitrary cap to try to keep port numbers in a relatively sane range
   const maxPort = firstPort + 200;
 
-  const gp = await import("get-port");
+  const gp = await import('get-port');
   const getPort = gp.default;
   const portNumbers = gp.portNumbers;
 

@@ -1,5 +1,5 @@
 declare const setPackageBuild: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, "kite/setPackageBuild">, setConfig: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, "kite/setConfig">, setServer: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, "kite/setServer">, setSetup: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, "kite/setSetup">, setState: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, "kite/setState">, setServerState: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, "kite/setServerState">, setServiceState: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, "kite/setServiceState">, setConfigFile: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, "kite/setConfigFile">;
-export { setPackageBuild, setConfig, setServer, setSetup, setState, setServerState, setServiceState, setConfigFile };
+export { setPackageBuild, setConfig, setServer, setSetup, setState, setServerState, setServiceState, setConfigFile, };
 declare const _default: import("redux").Reducer<any, import("redux").AnyAction>;
 export default _default;
 //# sourceMappingURL=slice.d.ts.map

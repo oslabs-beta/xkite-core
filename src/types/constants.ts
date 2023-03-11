@@ -1,6 +1,6 @@
 import path from 'path';
-import { KiteConfig } from './types';
-import { _ports_ } from './ymlgenerator/constants';
+import { KiteConfig } from '.';
+import { _ports_ } from './yml/constants';
 export const MAX_NUMBER_OF_BROKERS = 50;
 export const MAX_NUMBER_OF_ZOOKEEPERS = 1000;
 

@@ -1,4 +1,4 @@
-import { YAMLServicesDefaultSetup, PROMConfig, JMXConfg, KafkaConnectCfg, KafkaBrokerCfg, ZooKeeperCfg, PrometheusConfig, GrafanaCfg, PGConfig, KSQLConfig, BaseCfg, KSQLSchemaCfg, Juypter, SparkCfg, SpringCfg, YAMLConfig } from './types';
+import { YAMLServicesDefaultSetup, PROMConfig, JMXConfg, KafkaConnectCfg, KafkaBrokerCfg, ZooKeeperCfg, PrometheusConfig, GrafanaCfg, PGConfig, KSQLConfig, BaseCfg, KSQLSchemaCfg, Juypter, SparkCfg, SpringCfg, YAMLConfig } from './';
 export declare const downloadDir: string;
 export declare const network = "localhost";
 export declare const _ports_: YAMLServicesDefaultSetup;

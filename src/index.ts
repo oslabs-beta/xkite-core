@@ -1,12 +1,17 @@
 import path from 'path';
 import fs from 'fs-extra';
 import compose from 'docker-compose';
-import ymlGenerator from './ymlgenerator';
+import ymlGenerator from './yml';
 const zipper = require('zip-local');
-import { KiteState, KiteServerState } from './constants';
-import defaultCfg, { configFilePath } from './constants';
+import {
+  KiteState,
+  KiteServerState,
+  MAX_NUMBER_OF_BROKERS,
+  MAX_NUMBER_OF_ZOOKEEPERS,
+} from './types/constants';
+import defaultCfg, { configFilePath } from './types/constants';
 import { getPorts } from './getPorts';
-import { _ports_, downloadDir } from './ymlgenerator/constants';
+import { _ports_, downloadDir } from './types/yml/constants';
 const configPath = path.join(downloadDir, 'docker-compose.yml');
 const zipPath = path.join(downloadDir, 'pipeline.zip');
 
@@ -631,7 +636,7 @@ import {
   KiteSetup,
   KafkaSetup,
 } from './types';
-import { YAMLConfig, YAMLServicesDefaultSetup } from './ymlgenerator/types';
+import { YAMLConfig, YAMLServicesDefaultSetup } from './types/yml';
 export {
   KiteConfig,
   dbCfg,
@@ -651,4 +656,6 @@ export {
   downloadDir,
   YAMLServicesDefaultSetup,
   _ports_,
+  MAX_NUMBER_OF_BROKERS,
+  MAX_NUMBER_OF_ZOOKEEPERS,
 };

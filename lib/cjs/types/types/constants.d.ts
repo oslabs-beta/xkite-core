@@ -1,4 +1,4 @@
-import { KiteConfig } from './types';
+import { KiteConfig } from '.';
 export declare const MAX_NUMBER_OF_BROKERS = 50;
 export declare const MAX_NUMBER_OF_ZOOKEEPERS = 1000;
 declare const defaultCfg: KiteConfig;

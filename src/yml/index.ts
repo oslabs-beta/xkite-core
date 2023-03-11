@@ -23,7 +23,7 @@ import {
   _ports_,
   KAFKA_CONNECT_SRC,
   KAFKA_CONNECT_SINK,
-} from './constants';
+} from '../types/yml/constants';
 import { dbCfg, KiteConfig, KiteKafkaCfg, KiteSetup, sinkCfg } from '../types';
 
 const dependencies: string[] = [];
@@ -356,8 +356,8 @@ const ymlGenerator: () => (c: KiteConfig) => KiteSetup = () => {
       setup.jmx = { ports: [] };
     }
 
-    const springBSServers = [];
-    const springDeps = [];
+    const springBSServers: string[] = [];
+    const springDeps: string[] = [];
     for (let i = 0; i < kafka.brokers.size; i++) {
       const n = i + 1;
       // Kafka Config:
