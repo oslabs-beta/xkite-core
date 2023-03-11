@@ -118,7 +118,7 @@ const ymlGenerator: () => (c: KiteConfig) => KiteSetup = () => {
         PROMCONFIG.scrape_configs[1].static_configs[0].targets = [];
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       for (const service in YAML.services) {
         if ('docker' in setup) {
@@ -351,7 +351,7 @@ const ymlGenerator: () => (c: KiteConfig) => KiteSetup = () => {
     // console.log(JSON.stringify(kafka));
     // console.log(JSON.stringify(servers));
     let jmxExporterConfig: any;
-    console.log(`JMX = ${kafka.jmx}`);
+    // console.log(`JMX = ${kafka.jmx}`);
     if (kafka.jmx !== undefined) {
       fs.ensureDirSync(path.resolve(downloadDir, 'jmx'));
       jmxExporterConfig = yaml.load(

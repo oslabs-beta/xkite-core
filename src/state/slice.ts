@@ -11,7 +11,7 @@ const kiteSlice = createSlice({
   initialState,
   reducers: {
     setPackageBuild: (state, action) => {
-      console.log(`setting packageBuild: ${action.payload}`);
+      // console.log(`setting packageBuild: ${action.payload}`);
       state.packageBuild = action.payload;
       writeConfigToFile(state);
     },
@@ -111,7 +111,7 @@ function readConfigFromFile(): any {
     if (state !== undefined && Object.keys(state).length !== 0) {
       return JSON.parse(state);
     } else {
-      console.log('return default');
+      console.log('No previous state, using default');
       return defaultState;
     }
   } catch (err) {

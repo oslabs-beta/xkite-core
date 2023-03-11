@@ -70,7 +70,7 @@ function KiteCreator(): KiteClass {
    */
   async function checkPorts(args: number[]) {
     try {
-      console.log(args);
+      // console.log(args);
       const retPorts: number[] = [];
       for (const port of args) {
         const avPort = await getAvailablePorts(port, 1);
@@ -331,10 +331,6 @@ function KiteCreator(): KiteClass {
         cwd: downloadDir,
         log: true,
         // commandOptions: '', // TBD set the name of container
-        // callback: (chunk: Buffer) => { //TODO remove
-        //   //progress report
-        //   console.log('job in progress: ', chunk.toString());
-        // },
       });
       store.dispatch(setState(<KiteState>'Running'));
       console.log('docker deployment successful');
