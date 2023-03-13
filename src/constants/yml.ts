@@ -41,19 +41,20 @@ export const _ports_: YAMLServicesDefaultSetup = {
   kafka: {
     jmx: 9991, // only internal
     broker: { internal: 9092, external: 9092 },
-    spring: 9095, // only internal
     metrics: 29092, // only internal
+    spring: 9095, // only internal
     ksql: 9096, // only internal
-    connect: 9097,
+    connect_src: 9097,
+    connect_sink: 9098,
   },
   jmx: { internal: 5556, external: 5566 },
   docker: { internal: 9323, external: 9323 },
 };
 export const PROMCONFIG: PROMConfig = {
   global: {
-    scrape_interval: '5s',
-    evaluation_interval: '2s',
-    scrape_timeout: '4s',
+    scrape_interval: '10s',
+    evaluation_interval: '5s',
+    scrape_timeout: '9s',
   },
   rule_files: [null],
   scrape_configs: [
@@ -65,14 +66,14 @@ export const PROMCONFIG: PROMConfig = {
         },
       ],
     },
-    {
-      job_name: 'docker',
-      static_configs: [
-        {
-          targets: [],
-        },
-      ],
-    },
+    // {
+    //   job_name: 'docker',
+    //   static_configs: [
+    //     {
+    //       targets: [],
+    //     },
+    //   ],
+    // },
   ],
 };
 
@@ -91,13 +92,14 @@ export const KAFKA_CONNECT_SRC: KafkaConnectCfg = {
   ports: [
     `${_ports_.kafkaconnect_src.external}:${_ports_.kafkaconnect_src.internal}`,
   ],
+  restart: 'always',
   environment: {
     CONNECT_BOOTSTRAP_SERVERS: '', //kafka:9092
     CONNECT_REST_PORT: _ports_.kafkaconnect_src.internal,
-    CONNECT_GROUP_ID: 'quickstart',
-    CONNECT_CONFIG_STORAGE_TOPIC: 'quickstart-config',
-    CONNECT_OFFSET_STORAGE_TOPIC: 'quickstart-offsets',
-    CONNECT_STATUS_STORAGE_TOPIC: 'quickstart-status',
+    CONNECT_GROUP_ID: 'connect-source',
+    CONNECT_CONFIG_STORAGE_TOPIC: 'connect-source-config',
+    CONNECT_OFFSET_STORAGE_TOPIC: 'connect-source-offsets',
+    CONNECT_STATUS_STORAGE_TOPIC: 'connect-source-status',
     CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1,
     CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1,
     CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1,
@@ -119,13 +121,14 @@ export const KAFKA_CONNECT_SINK: KafkaConnectCfg = {
   ports: [
     `${_ports_.kafkaconnect_sink.external}:${_ports_.kafkaconnect_sink.internal}`,
   ],
+  restart: 'always',
   environment: {
     CONNECT_BOOTSTRAP_SERVERS: '', //kafka:9092
     CONNECT_REST_PORT: _ports_.kafkaconnect_sink.internal,
-    CONNECT_GROUP_ID: 'quickstart',
-    CONNECT_CONFIG_STORAGE_TOPIC: 'quickstart-config',
-    CONNECT_OFFSET_STORAGE_TOPIC: 'quickstart-offsets',
-    CONNECT_STATUS_STORAGE_TOPIC: 'quickstart-status',
+    CONNECT_GROUP_ID: 'connect-sink',
+    CONNECT_CONFIG_STORAGE_TOPIC: 'connect-sink-config',
+    CONNECT_OFFSET_STORAGE_TOPIC: 'connect-sink-offsets',
+    CONNECT_STATUS_STORAGE_TOPIC: 'connect-sink-status',
     CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1,
     CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1,
     CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1,
@@ -147,7 +150,7 @@ export const KAFKA_BROKER: KafkaBrokerCfg = {
   environment: {
     KAFKA_ZOOKEEPER_CONNECT: `zookeeper:${_ports_.zookeeper.peer.external}`,
     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP:
-      'METRICS:PLAINTEXT,INTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT,KSQL:PLAINTEXT,CONNECT:PLAINTEXT',
+      'METRICS:PLAINTEXT,INTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT,KSQL:PLAINTEXT,CONNECT_SRC:PLAINTEXT,CONNECT_SINK:PLAINTEXT',
     KAFKA_INTER_BROKER_LISTENER_NAME: 'INTERNAL',
     CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: `zookeeper:${_ports_.zookeeper.peer.external}`,
     CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1,
@@ -155,8 +158,8 @@ export const KAFKA_BROKER: KafkaBrokerCfg = {
     KAFKA_HEAP_OPTS: '-Xmx512M -Xms512M',
     KAFKA_BROKER_ID: 101,
     KAFKA_JMX_PORT: _ports_.kafka.jmx,
-    KAFKA_LISTENERS: `METRICS://:${_ports_.kafka.metrics},PLAINTEXT://:${_ports_.kafka.broker.external},INTERNAL://:${_ports_.kafka.spring},KSQL://kafka:${_ports_.kafka.ksql},CONNECT://kafka:${_ports_.kafka.connect}`,
-    KAFKA_ADVERTISED_LISTENERS: `METRICS://kafka:${_ports_.kafka.metrics},PLAINTEXT://${network}:${_ports_.kafka.broker.external},INTERNAL://kafka:${_ports_.kafka.spring},KSQL://kafka:${_ports_.kafka.ksql},CONNECT://kafka:${_ports_.kafka.connect}`,
+    KAFKA_LISTENERS: `METRICS://:${_ports_.kafka.metrics},PLAINTEXT://:${_ports_.kafka.broker.external},INTERNAL://:${_ports_.kafka.spring},KSQL://kafka:${_ports_.kafka.ksql},CONNECT_SRC://kafka:${_ports_.kafka.connect_src},CONNECT_SINK://kafka:${_ports_.kafka.connect_sink}`,
+    KAFKA_ADVERTISED_LISTENERS: `METRICS://kafka:${_ports_.kafka.metrics},PLAINTEXT://${network}:${_ports_.kafka.broker.external},INTERNAL://kafka:${_ports_.kafka.spring},KSQL://kafka:${_ports_.kafka.ksql},CONNECT_SRC://kafka:${_ports_.kafka.connect_src},CONNECT_SINK://kafka:${_ports_.kafka.connect_sink}`,
     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1,
     KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1,
     CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: `kafka:${_ports_.kafka.metrics}`,
@@ -168,7 +171,7 @@ export const KAFKA_BROKER: KafkaBrokerCfg = {
   // ports: [],
   volumes: [],
   container_name: '',
-  depends_on: ['zookeeper', 'postgres'],
+  depends_on: [''],
 };
 
 export const ZOOKEEPER: ZooKeeperCfg = {
@@ -290,7 +293,8 @@ export const KSQL_SCHEMA: KSQLSchemaCfg = {
   environment: {
     SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: '',
     SCHEMA_REGISTRY_HOST_NAME: 'schema-registry',
-    SCHEMA_REGISTRY_LISTENERS: `${network}:${_ports_.ksql_schema.external}`, //TODO: revist/test
+    SCHEMA_REGISTRY_LISTENERS: `http://0.0.0.0:${_ports_.ksql_schema.external}`, //TODO: revist/test
+    SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: ``,
   },
   ports: [`${_ports_.ksql_schema.external}:${_ports_.ksql_schema.internal}`],
   container_name: 'ksql_schema',
@@ -347,7 +351,7 @@ export const SPRING: SpringCfg = {
     `${path.join(downloadDir, 'spring/application.yml')}:/etc/myconfig.yml`,
   ],
   container_name: 'spring',
-  depends_on: ['kafka'],
+  depends_on: [''],
 };
 
 export const YAML: YAMLConfig = {

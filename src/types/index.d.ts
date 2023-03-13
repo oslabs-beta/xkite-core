@@ -183,7 +183,8 @@ export interface YAMLServicesDefaultSetup {
     spring: number;
     metrics: number;
     ksql: number;
-    connect: number;
+    connect_src: number;
+    connect_sink: number;
   };
   jmx: PortForward;
   docker: PortForward;
@@ -216,11 +217,11 @@ export interface PROMConfig {
     {
       job_name: string;
       static_configs: [{ targets: Array<string> }];
-    },
-    {
-      job_name: string;
-      static_configs: [{ targets: Array<string> }];
     }
+    // {
+    //   job_name: string;
+    //   static_configs: [{ targets: Array<string> }];
+    // }
   ];
 }
 
@@ -329,11 +330,13 @@ export interface KSQLConfig extends BaseCfg {
 }
 
 //https://github.com/confluentinc/schema-registry-workshop/blob/master/docker-compose.yml
+// https://github.com/confluentinc/cp-demo/blob/7.2.1-post/docker-compose.yml
 export interface KSQLSchemaCfg extends BaseCfg {
   environment: {
     SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: string;
     SCHEMA_REGISTRY_HOST_NAME: string; //schemaregistry
     SCHEMA_REGISTRY_LISTENERS: string; //localhost:8085
+    SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: string;
   };
 }
 

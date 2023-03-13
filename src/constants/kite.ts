@@ -34,8 +34,8 @@ export const defaultCfg: KiteConfig = {
     port: _ports_.grafana.external,
   },
   prometheus: {
-    scrape_interval: 5,
-    evaluation_interval: 2,
+    scrape_interval: 10,
+    evaluation_interval: 5,
     port: _ports_.prometheus.external,
   },
 };

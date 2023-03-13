@@ -35,7 +35,14 @@ const {
 
 function KiteCreator(): KiteClass {
   //Private Variable / Methods:
-  const selectedPorts = new Set<number>();
+  const selectedPorts = new Set<number>([
+    // initalized with broker listeners to prevent overlap
+    _ports_.kafka.metrics,
+    _ports_.kafka.spring,
+    _ports_.kafka.ksql,
+    _ports_.kafka.connect_src,
+    _ports_.kafka.connect_sink,
+  ]);
   /**
    * Gets the remote server link configuration.
    * @param {string} server
@@ -73,21 +80,22 @@ function KiteCreator(): KiteClass {
       // console.log(args);
       const retPorts: number[] = [];
       for (const port of args) {
-        const avPort = await getAvailablePorts(port, 1);
-        let j = 0;
-        while (j < avPort.length) {
-          if (!selectedPorts.has(avPort[j])) {
-            selectedPorts.add(avPort[j]);
-            retPorts.push(avPort[j]);
-            break;
+        let notFound = true;
+        let candidatePort = port;
+        while (notFound) {
+          // find an unused port
+          while (selectedPorts.has(candidatePort)) {
+            candidatePort++;
           }
-          j++;
+          const avport = await getAvailablePorts(port, 1);
+          if (!selectedPorts.has(avport[0])) {
+            selectedPorts.add(avport[0]); //add to set
+            retPorts.push(avport[0]);
+            notFound = false; //exit
+          }
         }
-        if (j === avPort.length)
-          throw Error(
-            `No available ports found range: ${port} - ${port + 200}`
-          );
       }
+      console.log(retPorts);
       return retPorts;
     } catch (error) {
       console.error('Error occurred while checking available ports!', error);
@@ -111,6 +119,7 @@ function KiteCreator(): KiteClass {
   async function checkConfigPorts(config: KiteConfig): Promise<KiteConfig> {
     try {
       let cfg = Object.assign({}, config);
+
       let kafka: KiteKafkaCfg = {
         ...cfg.kafka,
         brokers: {
@@ -122,10 +131,6 @@ function KiteCreator(): KiteClass {
                 new Array(cfg.kafka.brokers.size).fill(
                   _ports_.kafka.broker.external
                 )
-            ),
-            jmx: await checkPorts(
-              cfg.kafka.brokers?.ports?.jmx ??
-                new Array(cfg.kafka.brokers.size).fill(_ports_.kafka.jmx)
             ),
           },
         },
@@ -144,14 +149,23 @@ function KiteCreator(): KiteClass {
       };
 
       if (cfg.kafka.jmx !== undefined) {
+        // default JMX ports in case the input does not provide all of the elements....
+        const jPorts: number[] = [];
+
+        for (let i = 0; i < cfg.kafka.brokers.size; i++) {
+          if (
+            cfg.kafka.jmx?.ports !== undefined &&
+            i < cfg.kafka.jmx?.ports.length
+          )
+            jPorts.push(cfg.kafka.jmx.ports[i]);
+          else jPorts.push(_ports_.jmx.external + i);
+        }
+
         kafka = {
           ...kafka,
           jmx: {
             ...cfg.kafka.jmx,
-            ports: await checkPorts(
-              cfg.kafka.jmx.ports ??
-                new Array(cfg.kafka.zookeepers.size).fill(_ports_.jmx.external)
-            ),
+            ports: await checkPorts(jPorts),
           },
         };
       }
