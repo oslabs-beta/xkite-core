@@ -109,7 +109,7 @@ export const KAFKA_CONNECT_SRC: KafkaConnectCfg = {
       'org.apache.kafka.connect.json.JsonConverter',
     CONNECT_REST_ADVERTISED_HOST_NAME: network,
   },
-  container_name: 'kafka-connect-source',
+  container_name: 'kafka_connect_src',
   depends_on: [],
 };
 
@@ -137,7 +137,7 @@ export const KAFKA_CONNECT_SINK: KafkaConnectCfg = {
       'org.apache.kafka.connect.json.JsonConverter',
     CONNECT_REST_ADVERTISED_HOST_NAME: network,
   },
-  container_name: 'kafka-connect-sink',
+  container_name: 'kafka_connect_sink',
   depends_on: [],
 };
 
@@ -268,7 +268,7 @@ export const KSQL: KSQLConfig = {
 // # could add CLI https://ksqldb.io/quickstart.html
 export const KSQL_CLI: BaseCfg = {
   image: `confluentinc/ksqldb-cli`,
-  container_name: `ksqldb-cli`,
+  container_name: `ksql_cli`,
   entrypoint: '/bin/sh',
   ports: [],
   //strictly for testing...
@@ -293,7 +293,7 @@ export const KSQL_SCHEMA: KSQLSchemaCfg = {
     SCHEMA_REGISTRY_LISTENERS: `${network}:${_ports_.ksql_schema.external}`, //TODO: revist/test
   },
   ports: [`${_ports_.ksql_schema.external}:${_ports_.ksql_schema.internal}`],
-  container_name: 'ksql-schema',
+  container_name: 'ksql_schema',
 };
 
 export const JUPYTER: Juypter = {
@@ -309,7 +309,7 @@ export const JUPYTER: Juypter = {
     'jupyterhub_data:/data',
     // '/var/run/docker.sock:/var/run/docker.sock',
   ],
-  container_name: 'jupyterhub',
+  container_name: 'jupyter',
 };
 
 export const SPARK: SparkCfg = {
