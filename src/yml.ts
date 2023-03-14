@@ -5,7 +5,6 @@ import os from 'os';
 
 import * as yml from './constants/yml.js';
 const {
-  YAML,
   SPRING,
   SPARK,
   JUPYTER,
@@ -30,7 +29,7 @@ import {
   KiteConfig,
   KiteKafkaCfg,
   KiteSetup,
-  sinkCfg,
+  YAMLConfig,
 } from './types/index.js';
 
 // const ipAddress = Object.values(os.networkInterfaces())
@@ -43,10 +42,35 @@ import {
  * @returns a yaml generator function
  */
 const ymlGenerator: () => (c: KiteConfig) => KiteSetup = () => {
+  const YAML: YAMLConfig = {
+    services: {},
+    volumes: {
+      jupyterhub_data: {
+        driver: 'local',
+      },
+      dashboards: {
+        driver: 'local',
+        driver_opts: {
+          o: 'bind',
+          type: 'none',
+          device: `${path.join(downloadDir, 'grafana/dashboards')}`,
+        },
+      },
+      provisioning: {
+        driver: 'local',
+        driver_opts: {
+          o: 'bind',
+          type: 'none',
+          device: `${path.join(downloadDir, 'grafana/provisioning')}`,
+        },
+      },
+    },
+  };
+
   const dependencies: string[] = [];
   let setup: KiteSetup = {
     kafkaSetup: {
-      clientId: '',
+      clientId: 'xkite',
       brokers: [],
       ssl: false,
     },

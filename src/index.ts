@@ -35,7 +35,7 @@ const {
 
 function KiteCreator(): KiteClass {
   //Private Variable / Methods:
-  const selectedPorts = new Set<number>([
+  let selectedPorts = new Set<number>([
     // initalized with broker listeners to prevent overlap
     _ports_.kafka.metrics,
     _ports_.kafka.spring,
@@ -118,6 +118,14 @@ function KiteCreator(): KiteClass {
    */
   async function checkConfigPorts(config: KiteConfig): Promise<KiteConfig> {
     try {
+      selectedPorts = new Set<number>([
+        // initalized with broker listeners to prevent overlap
+        _ports_.kafka.metrics,
+        _ports_.kafka.spring,
+        _ports_.kafka.ksql,
+        _ports_.kafka.connect_src,
+        _ports_.kafka.connect_sink,
+      ]);
       let cfg = Object.assign({}, config);
 
       let kafka: KiteKafkaCfg = {
