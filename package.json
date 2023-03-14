@@ -1,6 +1,6 @@
 {
   "name": "xkite-core",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "description": "Core library for xkite application",
   "types": "./lib/cjs/types/index.d.ts",
   "main": "./lib/cjs/index.js",
@@ -73,6 +73,7 @@
     "fs-extra": "^11.1.0",
     "get-port": "^6.1.2",
     "js-yaml": "^4.1.0",
+    "node-fetch": "^2.6.9",
     "os": "^0.1.2",
     "path": "^0.12.7",
     "typescript": "^5.1.0-dev.20230311"
