@@ -2,6 +2,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import compose from 'docker-compose';
 import ymlGenerator from './yml.js';
+const fetch = require('node-fetch');
 const zipper = require('zip-local');
 import type {
   KiteConfig,
@@ -11,6 +12,8 @@ import type {
   KiteClass,
   KiteKafkaCfg,
   dbCfg,
+  KiteSetup,
+  KafkaSetup,
 } from './types/index.js';
 import * as consts from './constants/kite.js';
 const { defaultCfg } = consts;
@@ -54,16 +57,12 @@ function KiteCreator(): KiteClass {
     store.dispatch(setState(<KiteState>'Init'));
     store.dispatch(setServerState(<KiteServerState>'Disconnected'));
     try {
-      const res = [
-        fetch(`${server}/api/kite/getConfig`),
-        fetch(`${server}/api/kite/getSetup`),
-        fetch(`${server}/api/kite/getConfigFile`),
-        fetch(`${server}/api/kite/getPackageBuild`),
-      ];
-      store.dispatch(setConfig((await res[0]).json()));
-      store.dispatch(setSetup((await res[1]).json()));
-      store.dispatch(setConfigFile((await res[2]).json()));
-      store.dispatch(setPackageBuild((await res[3]).json()));
+      let res = await fetch(`${server}/api/kite/getConfig`);
+      store.dispatch(setConfig(await res.json()));
+      res = await fetch(`${server}/api/kite/getSetup`);
+      store.dispatch(setConfig(await res.json()));
+      res = await fetch(`${server}/api/kite/getConfigFile`);
+      store.dispatch(setConfig(await res.json()));
       store.dispatch(setServerState(<KiteServerState>'Connected'));
     } catch (err) {
       console.error(`error fetching from ${server}/api/:\n${err}`);
@@ -77,7 +76,6 @@ function KiteCreator(): KiteClass {
    */
   async function checkPorts(args: number[]) {
     try {
-      // console.log(args);
       const retPorts: number[] = [];
       for (const port of args) {
         let notFound = true;
@@ -95,7 +93,6 @@ function KiteCreator(): KiteClass {
           }
         }
       }
-      console.log(retPorts);
       return retPorts;
     } catch (error) {
       console.error('Error occurred while checking available ports!', error);
@@ -425,7 +422,7 @@ function KiteCreator(): KiteClass {
     try {
       const { server } = store.getState();
       await fetch(`${server}/api/kite/shutdown`, {
-        method: 'POST',
+        method: 'DELETE',
         headers: {
           Accept: 'application/json',
         },
@@ -482,6 +479,94 @@ function KiteCreator(): KiteClass {
     }
   }
 
+  async function getPackageBuildServer(): Promise<KiteConfigFile | Error> {
+    try {
+      const { server } = store.getState();
+      const res = await fetch(`${server}/api/kite/getPackageBuild`, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/zip',
+        },
+      });
+      return { fileStream: await res.arrayBuffer() };
+    } catch (err) {
+      console.error(`Could not retrieve package.zip from server:\n${err}`);
+      throw err;
+    }
+  }
+
+  function getPackageBuildLocal(): Promise<KiteConfigFile> {
+    fs.removeSync(zipPath);
+    zipper.sync.zip(downloadDir).compress().save(zipPath);
+
+    return new Promise((res, rej) => {
+      try {
+        const header = {
+          'Content-Type': 'application/zip',
+          'Content-Length': fs.statSync(zipPath).size,
+        };
+        const fileStream = fs.readFileSync(zipPath);
+        res({ header, fileStream });
+      } catch (err) {
+        rej(err);
+      }
+    });
+  }
+
+  async function getKiteStateServer(): Promise<KiteState> {
+    const { server } = store.getState();
+    const res = await fetch(`${server}/api/kite/getKiteState`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/text',
+      },
+    });
+    return await res.text();
+  }
+
+  async function getConfigFileServer(): Promise<any> {
+    const { server } = store.getState();
+    const res = await fetch(`${server}/api/kite/getConfigFile`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+    });
+    return await res.json();
+  }
+
+  async function getConfigServer(): Promise<KiteConfig> {
+    const { server } = store.getState();
+    const res = await fetch(`${server}/api/kite/getConfig`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+    });
+    return (await res.json()) as KiteConfig;
+  }
+
+  async function getDBSetupServer(): Promise<dbCfg | undefined> {
+    const { dBSetup } = await getSetupServer();
+    return dBSetup;
+  }
+
+  async function getKafkaSetupServer(): Promise<KafkaSetup> {
+    const { kafkaSetup } = await getSetupServer();
+    return kafkaSetup;
+  }
+
+  async function getSetupServer(): Promise<KiteSetup> {
+    const { server } = store.getState();
+    const res = await fetch(`${server}/api/kite/getSetup`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+    });
+    return (await res.json()) as KiteSetup;
+  }
+
   return {
     //Public Variables / Methods:
 
@@ -494,6 +579,7 @@ function KiteCreator(): KiteClass {
      * for remote or local setup.
      */
     configure: async function (arg?: string | KiteConfig) {
+      console.log('Configuring docker instances...');
       if (arg === undefined) {
         await configLocal(defaultCfg);
       } else {
@@ -521,6 +607,7 @@ function KiteCreator(): KiteClass {
     deploy: async function (arg?: any) {
       // if server active deployment happens there...
       const { serverState } = store.getState();
+      console.log('Deploying docker instances...');
       if (serverState === <KiteServerState>'Connected') {
         await deployServer();
       } else {
@@ -533,8 +620,10 @@ function KiteCreator(): KiteClass {
      * setup to be used for connecting
      * to a kafka instance and/or database.
      */
-    getSetup: function (): any {
-      return store.getState().setup;
+    getSetup: function (): KiteSetup | Promise<KiteSetup> {
+      const { serverState } = store.getState();
+      if (serverState === <KiteServerState>'Connected') return getSetupServer();
+      else return store.getState().setup as KiteSetup;
     },
 
     /**
@@ -542,8 +631,11 @@ function KiteCreator(): KiteClass {
      * setup to be used for connecting
      * to a kafka instance.
      */
-    getKafkaSetup: function (): any {
-      return store.getState().kafkaSetup;
+    getKafkaSetup: function (): KafkaSetup | Promise<KafkaSetup> {
+      const { serverState } = store.getState();
+      if (serverState === <KiteServerState>'Connected')
+        return getKafkaSetupServer();
+      else return store.getState().kafkaSetup as KafkaSetup;
     },
 
     /**
@@ -551,8 +643,11 @@ function KiteCreator(): KiteClass {
      * setup to be used for connecting
      * to a database.
      */
-    getDBSetup: function (): any {
-      return store.getState().dBSetup;
+    getDBSetup: function (): dbCfg | Promise<dbCfg | undefined> {
+      const { serverState } = store.getState();
+      if (serverState === <KiteServerState>'Connected')
+        return getDBSetupServer();
+      else return store.getState().dBSetup as dbCfg;
     },
 
     /**
@@ -561,8 +656,11 @@ function KiteCreator(): KiteClass {
      * @returns {KiteConfig}
      *
      */
-    getConfig: function (): any {
-      return store.getState().config;
+    getConfig: function (): KiteConfig | Promise<KiteConfig> {
+      const { serverState } = store.getState();
+      if (serverState === <KiteServerState>'Connected')
+        return getConfigServer();
+      else return store.getState().config as KiteConfig;
     },
 
     /**
@@ -577,16 +675,22 @@ function KiteCreator(): KiteClass {
      * res.writeHead(200, configObj.header);
      * configObj.fileStream.pipe(res);
      */
-    getConfigFile: function (): any {
-      return store.getState().configFile;
+    getConfigFile: function (): KiteConfigFile | Promise<KiteConfigFile> {
+      const { serverState } = store.getState();
+      if (serverState === <KiteServerState>'Connected')
+        return getConfigFileServer();
+      else return store.getState().configFile as KiteConfigFile;
     },
 
     /**
      *
      * @returns state of the Kite Application
      */
-    getKiteState: function (): KiteState {
-      return store.getState().state;
+    getKiteState: function (): KiteState | Promise<KiteState> {
+      const { serverState } = store.getState();
+      if (serverState === <KiteServerState>'Connected')
+        return getKiteStateServer();
+      else return store.getState().state as KiteState;
     },
 
     /**
@@ -597,22 +701,14 @@ function KiteCreator(): KiteClass {
       return store.getState().serverState;
     },
 
-    getPackageBuild: function (): Promise<KiteConfigFile> {
-      fs.removeSync(zipPath);
-      zipper.sync.zip(downloadDir).compress().save(zipPath);
-
-      return new Promise((res, rej) => {
-        try {
-          const header = {
-            'Content-Type': 'application/zip',
-            'Content-Length': fs.statSync(zipPath).size,
-          };
-          const fileStream = fs.readFileSync(zipPath);
-          res({ header, fileStream });
-        } catch (err) {
-          rej(err);
-        }
-      });
+    getPackageBuild: function (): Promise<KiteConfigFile | Error> {
+      const { serverState } = store.getState();
+      console.log('Getting package build zip...');
+      if (serverState === <KiteServerState>'Connected') {
+        return getPackageBuildServer();
+      } else {
+        return getPackageBuildLocal();
+      }
     },
     /**
      * If the kite server isn't running
@@ -622,6 +718,7 @@ function KiteCreator(): KiteClass {
      */
     disconnect: async function (): Promise<any> {
       const { serverState } = store.getState();
+      console.log('Disconnecting from docker instances...');
       if (serverState === <KiteServerState>'Connected') {
         store.dispatch(setServerState(<KiteServerState>'Disconnected'));
         disconnectServer();
@@ -639,7 +736,8 @@ function KiteCreator(): KiteClass {
      */
     shutdown: async function (): Promise<any> {
       const { serverState } = store.getState();
-      if (serverState === <KiteServerState>'Connected') {
+      console.log('Shutting down docker instances and removing volumes...');
+      if ((serverState as KiteServerState) === 'Connected') {
         store.dispatch(setServerState(<KiteServerState>'Disconnected'));
         await shutdownServer();
       } else {
@@ -652,9 +750,14 @@ function KiteCreator(): KiteClass {
      */
     pause: async function (service?: string[]): Promise<any> {
       const { serverState, services } = store.getState();
-      if (service === undefined) service = services; // default to use all.
+      if (service === undefined || service.length === 0 || service[0] === '') {
+        // default to use all.
+        console.log('Pausing all docker instances...');
+        service = services;
+      } else {
+        console.log('Pausing docker instance(s): ' + JSON.stringify(service));
+      }
       if (serverState === <KiteServerState>'Connected') {
-        store.dispatch(setServerState(<KiteServerState>'Disconnected'));
         await pauseServer(service);
       } else {
         await pauseLocal(service);
@@ -666,9 +769,14 @@ function KiteCreator(): KiteClass {
      */
     unpause: async function (service?: string[]): Promise<any> {
       const { serverState, services } = store.getState();
-      if (service === undefined) service = services; // default to use all.
+      if (service === undefined || service.length === 0 || service[0] === '') {
+        // default to use all.
+        service = services;
+        console.log('Unpausing all docker instances...');
+      } else {
+        console.log('Unpausing docker instance(s): ' + JSON.stringify(service));
+      }
       if (serverState === <KiteServerState>'Connected') {
-        store.dispatch(setServerState(<KiteServerState>'Disconnected'));
         await unpauseServer(service);
       } else {
         await unpauseLocal(service);
@@ -678,3 +786,4 @@ function KiteCreator(): KiteClass {
   };
 }
 export const Kite = KiteCreator();
+export const default_ports = _ports_;

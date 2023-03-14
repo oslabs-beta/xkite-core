@@ -122,7 +122,7 @@ function readConfigFromFile(): any {
 
 function writeConfigToFile(state: any): void {
   try {
-    console.log('writing to file...');
+    // console.log('writing to file...');
     fs.writeFileSync(
       path.resolve(configFilePath, 'cfg.json'),
       JSON.stringify(state)
