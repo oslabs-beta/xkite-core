@@ -15,7 +15,6 @@ import {
   Juypter,
   SparkCfg,
   SpringCfg,
-  YAMLConfig,
 } from '../types/index.js';
 
 export const downloadDir = path.join(__dirname, '../../download');
@@ -352,29 +351,4 @@ export const SPRING: SpringCfg = {
   ],
   container_name: 'spring',
   depends_on: [''],
-};
-
-export const YAML: YAMLConfig = {
-  services: {},
-  volumes: {
-    jupyterhub_data: {
-      driver: 'local',
-    },
-    dashboards: {
-      driver: 'local',
-      driver_opts: {
-        o: 'bind',
-        type: 'none',
-        device: `${path.join(downloadDir, 'grafana/dashboards')}`,
-      },
-    },
-    provisioning: {
-      driver: 'local',
-      driver_opts: {
-        o: 'bind',
-        type: 'none',
-        device: `${path.join(downloadDir, 'grafana/provisioning')}`,
-      },
-    },
-  },
 };
