@@ -3,7 +3,7 @@ import fs from 'fs-extra';
 import compose from 'docker-compose';
 import ymlGenerator from './yml.js';
 const fetch = require('node-fetch');
-const zipper = require('zip-local');
+const zipper = require('zip-a-folder');
 import type {
   KiteConfig,
   KiteConfigFile,
@@ -21,7 +21,7 @@ import * as yml from './constants/yml.js';
 const { _ports_, downloadDir } = yml;
 import getAvailablePorts from './getPorts.js';
 const configPath = path.join(downloadDir, 'docker-compose.yml');
-const zipPath = path.join(downloadDir, 'pipeline.zip');
+const zipPath = path.join(downloadDir, '../pipeline.zip');
 
 import store from './state/store.js';
 import * as slice from './state/slice.js';
@@ -495,9 +495,9 @@ function KiteCreator(): KiteClass {
     }
   }
 
-  function getPackageBuildLocal(): Promise<KiteConfigFile> {
+  async function getPackageBuildLocal(): Promise<KiteConfigFile> {
     fs.removeSync(zipPath);
-    zipper.sync.zip(downloadDir).compress().save(zipPath);
+    await zipper.zip(downloadDir, zipPath);
 
     return new Promise((res, rej) => {
       try {

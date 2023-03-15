@@ -1,20 +1,23 @@
-# xkite-core <br> ![version](https://img.shields.io/badge/version-1.0.26-blue.svg) ![license](https://img.shields.io/badge/license-MIT-blue.svg) <span><a href="https://xkite.io/"><img src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social" /></a></span>
+# xkite-core <br> ![version](https://img.shields.io/badge/version-1.0.27-blue.svg) ![license](https://img.shields.io/badge/license-MIT-blue.svg) <span><a href="https://xkite.io/"><img src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social" /></a></span>
 
 ### Core Library for xkite, a Kafka Integrated Testing Environment
 
 xkite-core provides a comprehensive prototyping, testing, and monitoring toolset for Apache Kafka. Use xkite to bootstrap your next project, or install our library into an existing project. Built by developers, for developers.
 
 ## Dependencies
-The latest stable versions of: 
+
+The latest stable versions of:
+
 - <a href="https://nodejs.org/en/">Node.js and NPM</a>
 - <a href="https://docs.docker.com/compose/install/">docker-compose</a>
 
 ## Installation
-1) Clone this Repository <br>
-<code>git clone https://github.com/oslabs-beta/xkite-core.git</code>
 
-2) Install Dependencies <br>
-<code>cd</code> into the cloned repository and run <code>npm install</code>
+1. Clone this Repository <br>
+   <code>git clone https://github.com/oslabs-beta/xkite-core.git</code>
+
+2. Install Dependencies <br>
+   <code>cd</code> into the cloned repository and run <code>npm install</code>
 
 ## Who Uses xkite-core
 
@@ -27,7 +30,7 @@ The xkite-core library is, as the name suggests, the core library for xkite.
 
 To interface with xkite-core, simply import the <code>Kite</code> class into your project.
 
-In xkite, <code>Kite</code> provides the underlying functionality for configuring a Docker Compose YAML configuration, managing docker containers (configure, run, pause and shutdown), interfacing with remote xkite servers, and providing configuration settings for developers to easily connect to  Kafka instances.
+In xkite, <code>Kite</code> provides the underlying functionality for configuring a Docker Compose YAML configuration, managing docker containers (configure, run, pause and shutdown), interfacing with remote xkite servers, and providing configuration settings for developers to easily connect to Kafka instances.
 
 ## Kite Class Data Types
 
@@ -477,7 +480,9 @@ fs.writeFileSync(
 </details>
 
 ## Docker Images
-xkite uses the following docker images to provide their associated services: 
+
+xkite uses the following docker images to provide their associated services:
+
 - <a href="https://hub.docker.com/r/xkite/kafka-connector">xkite/kafka-connector</a>
 - <a href="https://hub.docker.com/r/bitnami/jmx-exporter">bitnami/jmx-exporter</a>
 - <a href="https://hub.docker.com/r/confluentinc/cp-kafka">confluentinc/cp-kafka</a>
