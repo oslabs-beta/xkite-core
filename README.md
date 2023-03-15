@@ -1,34 +1,34 @@
-# xkite-core ![version](https://img.shields.io/badge/version-1.0.26-blue.svg) ![license](https://img.shields.io/badge/license-MIT-blue.svg)
+# xkite-core <br> ![version](https://img.shields.io/badge/version-1.0.26-blue.svg) ![license](https://img.shields.io/badge/license-MIT-blue.svg) <span><a href="https://xkite.io/"><img src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social" /></a></span>
 
-<div align="center">
-    <a href="https://xkite.io/">
-        <img src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social" />
-    </a>
-</div>
+## Core Library for xkite, a Kafka Integrated Testing Environment
 
-Core Library for xkite, a Kafka Integrated Testing Environment
+xkite-core provides a comprehensive prototyping, testing, and monitoring toolset for Apache Kafka. Use xkite to bootstrap your next project, or install our library into an existing project. Built by developers, for developers.
 
-xkite-core supports comprehensive prototyping, testing, and monitoring toolset built for Apache Kafka. Use xkite to bootstrap your next project, or install our library into an existing project. Built by (and for) developers.
+## Dependencies
+The latest stable versions of: 
+- <a href="https://nodejs.org/en/">Node.js and NPM</a>
+- <a href="https://docs.docker.com/compose/install/">docker-compose</a>
 
-# Dependencies
+## Installation
+#### Clone this Repository
+<code>git clone https://github.com/oslabs-beta/xkite-core.git</code>
+#### Install dependencies
+<code>cd</code> into the cloned repository and run <code>npm install</code>
 
-- Latest stable versions of Node.js and NPM installed
-- Latest stable version of <a href="https://docs.docker.com/compose/install/">docker-compose</a> installed.
-- Clone repository: <code>git clone https://github.com/oslabs-beta/xkite-core.git</code>
-- Install dependencies: Run <code>npm install</code> inside the project folder
-
-# Who Uses xkite-core
+## Who Uses xkite-core
 
 - <a href="https://github.com/oslabs-beta/xkite">xkite GUI</a>
 - <a href="https://github.com/oslabs-beta/xkite-cli">xkite CLI</a>
 
-# How It Works
+## How It Works
 
-The xkite-core library is, as the name suggests, the core library for xkite. It provides the underpinning functionality for configuring a YAML file, managing docker containers (configure, run, pause, and shutdown), interfacing with remote xkite servers, and providing configuration settings for users to easily connect to their Kafka instances for development purposes.
+The xkite-core library is, as the name suggests, the core library for xkite.
 
-xkite-core contains the <code>Kite</code> class which provides the developers with a simple to use interface from which to generate custom YAML files and manage docker containers.
+To interface with xkite-core, simply import the <code>Kite</code> class into your project.
 
-# Kite Class DataTypes
+In xkite, <code>Kite</code> provides the underlying functionality for configuring a Docker Compose YAML configuration, managing docker containers (configure, run, pause and shutdown), interfacing with remote xkite servers, and providing configuration settings for developers to easily connect to  Kafka instances.
+
+## Kite Class Data Types
 
 Click to expand details.
 
@@ -475,8 +475,8 @@ fs.writeFileSync(
 
 </details>
 
-# Docker Images
-
+## Docker Images
+xkite uses the following docker images to provide their associated services: 
 - <a href="https://hub.docker.com/r/xkite/kafka-connector">xkite/kafka-connector</a>
 - <a href="https://hub.docker.com/r/bitnami/jmx-exporter">bitnami/jmx-exporter</a>
 - <a href="https://hub.docker.com/r/confluentinc/cp-kafka">confluentinc/cp-kafka</a>
