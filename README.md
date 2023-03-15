@@ -1,6 +1,6 @@
 # xkite-core <br> ![version](https://img.shields.io/badge/version-1.0.26-blue.svg) ![license](https://img.shields.io/badge/license-MIT-blue.svg) <span><a href="https://xkite.io/"><img src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social" /></a></span>
 
-## Core Library for xkite, a Kafka Integrated Testing Environment
+### Core Library for xkite, a Kafka Integrated Testing Environment
 
 xkite-core provides a comprehensive prototyping, testing, and monitoring toolset for Apache Kafka. Use xkite to bootstrap your next project, or install our library into an existing project. Built by developers, for developers.
 
