@@ -10,9 +10,10 @@ The latest stable versions of:
 - <a href="https://docs.docker.com/compose/install/">docker-compose</a>
 
 ## Installation
-#### Clone this Repository
+1) Clone this Repository <br>
 <code>git clone https://github.com/oslabs-beta/xkite-core.git</code>
-#### Install dependencies
+
+2) Install Dependencies <br>
 <code>cd</code> into the cloned repository and run <code>npm install</code>
 
 ## Who Uses xkite-core
