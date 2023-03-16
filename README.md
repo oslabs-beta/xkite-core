@@ -1,4 +1,5 @@
-# xkite-core <br> ![version](https://img.shields.io/badge/version-1.0.27-blue.svg) ![license](https://img.shields.io/badge/license-MIT-blue.svg) <span><a href="https://xkite.io/"><img src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social" /></a></span>
+![xkite-core](./xkite-core-banner.svg)
+<br> ![version](https://img.shields.io/badge/version-1.0.28-blue.svg) ![license](https://img.shields.io/badge/license-MIT-blue.svg) <span><a href="https://xkite.io/"><img src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social" /></a></span>
 
 ### Core Library for xkite, a Kafka Integrated Testing Environment
 
